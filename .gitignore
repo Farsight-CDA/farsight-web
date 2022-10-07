@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Code Generation & Build Aritifacts
+/contracts
+
 # dependencies
 /node_modules
 /.pnp
@@ -26,3 +29,4 @@ out
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/.vs
