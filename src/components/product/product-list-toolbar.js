@@ -24,7 +24,7 @@ export const ProductListToolbar = (props) => (
       }}
     >
       <Typography sx={{ m: 1 }} variant="h4">
-        Products
+        Cross Chain Label Service
       </Typography>
     </Box>
     <Box sx={{ mt: 3 }}>

@@ -45,7 +45,7 @@ Fahrsight-web
 		├── _document.js
 		├── account.js
 		├── index.js
-		├── products.js
+		├── register.js
 ```
 
 ## Resources

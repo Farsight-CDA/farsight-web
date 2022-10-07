@@ -11,14 +11,14 @@ import { NavItem } from "./nav-item";
 
 const items = [
   {
+    href: "/register",
+    icon: <ShoppingBagIcon fontSize="small" />,
+    title: "Register",
+  },
+  {
     href: "/",
     icon: <ChartBarIcon fontSize="small" />,
     title: "Dashboard",
-  },
-  {
-    href: "/products",
-    icon: <ShoppingBagIcon fontSize="small" />,
-    title: "Products",
   },
   {
     href: "/account",
