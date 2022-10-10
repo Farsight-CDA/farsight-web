@@ -22,14 +22,36 @@ if (!fs.existsSync(abi_output_path)) {
   fs.mkdirSync(abi_output_path);
 }
 
-var sources = {
-  'RegistrarController.sol': {
-     content: fs.readFileSync(path.resolve(contracts_root, "mainchain\\RegistrarController.sol"), 'utf8')
-  }
-};
+function getAllFiles(dirPath, arrayOfFiles) {
+  arrayOfFiles = arrayOfFiles || [];
+  files = fs.readdirSync(dirPath);
+  
+  files.forEach(file => {
+    if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
+      arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles);
+    } else {
+      if (path.extname(file) != '.sol') {
+        return;
+      }
+
+      arrayOfFiles.push(path.join(dirPath, file));
+    }
+  });
+
+  return arrayOfFiles;
+}
+
+const sourceFiles = getAllFiles(contracts_root, null);
+
+var sources = {};
+
+sourceFiles.forEach(file => {
+  sources[path.basename(file)] = fs.readFileSync(file, 'utf-8');
+});
+
 var input = {
   language: 'Solidity',
-  sources: sources  ,
+  sources: { 'RegistrarController.sol': { content: sources['RegistrarController.sol'] } },
   settings: {
     outputSelection: {
       '*': {
@@ -40,9 +62,7 @@ var input = {
 };
 
 function findImports(relativePath) {
-  //my imported sources are stored under the node_modules folder!
-  const absolutePath = path.resolve(__dirname, contracts_root, 'mainchain', relativePath);
-  const source = fs.readFileSync(absolutePath, 'utf8');
+  const source = sources[path.basename(relativePath)];
   return { contents: source };
 }
 
