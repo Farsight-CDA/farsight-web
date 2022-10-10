@@ -24,7 +24,7 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 }));
 
 export const DashboardNavbar = (props) => {
-  const { web3, toggleConnection, accounts, chainid } = useContext(AuthContext);
+  const { web3, toggleConnection, address, chainId } = useContext(AuthContext);
 
   const { onSidebarOpen, ...other } = props;
   const settingsRef = useRef(null);
@@ -68,13 +68,18 @@ export const DashboardNavbar = (props) => {
             </IconButton>
           </Tooltip>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title={accounts[0]} arrow>
-            <Typography color="text.secondary" variant="body2">
-              {accounts[0].substring(0, 7) +
-                (accounts[0].length < 5 ? "" : "...") +
-                accounts[0].substring(35, 80)}
-            </Typography>
-          </Tooltip>
+          {
+            address !== null
+              ?          
+                <Tooltip title={address} arrow>
+                <Typography color="text.secondary" variant="body2">
+                  {address.substring(0, 7) +
+                    (address.length < 5 ? "" : "...") +
+                    address.substring(35, 80)}
+                </Typography>
+              </Tooltip>
+              : <></>
+          }
           <Box
             style={{ minWidth: "180px" }}
             display="flex"
@@ -82,7 +87,7 @@ export const DashboardNavbar = (props) => {
             alignItems="flex-end"
           >
             <Button onClick={toggleConnection}>
-              {web3 == null ? "Disconnect Wallet" : "Connect Wallet"}
+              {web3 !== null ? "Disconnect Wallet" : "Connect Wallet"}
             </Button>
           </Box>
         </Toolbar>

@@ -1,5 +1,5 @@
-import { createContext, useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import { createContext, useEffect, useRef, useState } from "react";
+import PropTypes, { func } from "prop-types";
 import Web3 from "web3";
 
 export const AuthContext = createContext({ web3: undefined });
@@ -7,70 +7,99 @@ export const AuthContext = createContext({ web3: undefined });
 export const AuthProvider = (props) => {
   const { children } = props;
 
-  const [web3, setweb3] = useState();
-  const [event, triggerevent] = useState(0);
-  const [accounts, setaccounts] = useState([""]);
-  const [chainid, setchainid] = useState();
+  const [web3, setWeb3] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [chainId, setChainId] = useState(null);
+  const [walletType, setWalletType] = useState(0);
+  const walletTypeRef = useRef();
+  walletTypeRef.current = walletType;
+  const web3Ref = useRef();
+  web3Ref.current = web3;
 
-  const walletType = "";
+  const WalletType = { browserEVM: 1 };
 
-  const WalletType = { metamask: 1 };
+  function toggleConnection() {
+    if (web3 === null) {
+      connectWallet();
+    } else {
+      disconnectWallet();
+    }
+  }
 
-  function ConnectWallet() {
+  function connectWallet() {
+    tryConnectEVMBrowserWallet();
+  }
+
+  function disconnectWallet() {
+    setWeb3(null);
+    setAddress(null);
+    setChainId(null);
+    setWalletType(0);
+  }
+
+  function tryConnectEVMBrowserWallet() {
     if (Web3.givenProvider === undefined || Web3.givenProvider === null) {
       return;
     }
-    setweb3(new Web3(Web3.givenProvider));
-    if (typeof window.ethereum !== undefined) {
-      //console.log("MetaMask is installed!");
-      window.ethereum
-        .request({ method: "eth_requestAccounts" })
-        .then((accounts) => setaccounts(accounts));
-      console.log(accounts);
-    }
+
+    setWeb3(new Web3(Web3.givenProvider));
+    registerEVMEvents();
+
+    window.ethereum
+     .request({ method: "eth_requestAccounts" })
+     .then(accounts => {
+      if (accounts.length == 0) {
+        disconnectWallet();
+        return;
+      }
+
+      setAddress(accounts[0]);
+      setWalletType(WalletType.browserEVM);
+     });
   }
 
-  function DisconnectWallet() {
-    setweb3(undefined);
-  }
-
-  function toggleConnection() {
-    if (web3 == null) {
-      ConnectWallet();
-    } else {
-      DisconnectWallet();
-    }
-  }
-
-  function handleAccountChange(wallet) {
-    if (wallet !== walletType) {
+  function registerEVMEvents() {
+    if (window.ethereum === undefined || window.ethereum === null) {
       return;
     }
-    web3?.eth?.getAccounts?.().then((accounts) => {
-      setaccounts(accounts);
+
+    window.ethereum.on("accountsChanged", () => {
+      handleAccountChanged(WalletType.browserEVM);
+    });
+    window.ethereum.on("chainChanged", () => {
+      handleChainIdChanged(WalletType.browserEVM);
     });
   }
 
-  function handleChainId(wallet) {
-    if (wallet !== walletType) {
+  function handleAccountChanged(wallet) {
+    if (wallet != walletTypeRef.current) {
       return;
     }
-    web3?.eth
-      ?.getChainId()?.()
-      .then((chainid) => setchainid(chainid));
+    web3Ref.current?.eth.getAccounts().then((_accounts) => {
+      if (_accounts.length == 0) {
+        disconnectWallet();
+        return;
+      }
+      setAddress(_accounts[0]);
+    });
   }
 
-  useEffect(() => {
-    window.ethereum?.on("accountsChanged", () => {
-      handleAccountChange(WalletType.metamask);
+  function handleChainIdChanged(wallet) {
+    if (wallet != walletTypeRef.current) {
+      return;
+    }
+    web3Ref.current?.eth.getChainId().then((_chainId) => {
+      if (_chainId == 0) {
+        disconnectWallet();
+        return;
+      } 
+
+      setChainId(_chainId);
     });
-    window.ethereum?.on("chainChanged", () => {
-      handleChainId(WalletType.metamask);
-    });
-  }, []);
+  }
 
   return (
-    <AuthContext.Provider value={{ web3, toggleConnection, accounts, chainid }}>
+    <AuthContext.Provider value={{ web3, toggleConnection, address, chainId }}>
       {children}
     </AuthContext.Provider>
   );
