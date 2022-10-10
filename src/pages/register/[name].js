@@ -24,7 +24,7 @@ const Page = () => {
           <Typography sx={{ mb: 3 }} variant="h4">
             Register
           </Typography>
-          <RegisterCard product={addresses[0]} />
+          <RegisterCard product={addresses[0]} year={1} />
           <Grid container spacing={3}></Grid>
         </Container>
       </Box>

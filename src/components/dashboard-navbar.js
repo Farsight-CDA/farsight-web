@@ -3,20 +3,21 @@ import PropTypes from "prop-types";
 import styled from "@emotion/styled";
 import {
   AppBar,
-  Avatar,
-  Badge,
   Box,
   Button,
   IconButton,
+  InputAdornment,
+  SvgIcon,
+  TextField,
   Toolbar,
   Tooltip,
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import WalletRoundedIcon from "@mui/icons-material/WalletRounded";
 import { AccountPopover } from "./account-popover";
 import { AuthContext } from "../contexts/auth-context";
+import { useRouter } from "next/router";
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -29,6 +30,18 @@ export const DashboardNavbar = (props) => {
   const { onSidebarOpen, ...other } = props;
   const settingsRef = useRef(null);
   const [openAccountPopover, setOpenAccountPopover] = useState(false);
+
+  const [name, setName] = useState("");
+
+  const router = useRouter();
+
+  const handleKeyDown = (e) => {
+    if (e.keyCode !== 13) {
+      return;
+    }
+
+    router.push("register/" + name);
+  };
 
   return (
     <>
@@ -62,24 +75,36 @@ export const DashboardNavbar = (props) => {
           >
             <MenuIcon fontSize="small" />
           </IconButton>
-          <Tooltip title="Search">
-            <IconButton sx={{ ml: 1 }}>
-              <SearchIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          <Box sx={{ maxWidth: 500, ml: 2 }}>
+            <TextField
+              value={name}
+              onChange={(x) => setName(x.target.value)}
+              onKeyDown={handleKeyDown}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SvgIcon fontSize="small" color="action">
+                      <SearchIcon />
+                    </SvgIcon>
+                  </InputAdornment>
+                ),
+              }}
+              placeholder="Search on-chain name"
+              variant="standard"
+            />
+          </Box>
           <Box sx={{ flexGrow: 1 }} />
-          {
-            address !== null
-              ?          
-                <Tooltip title={address} arrow>
-                <Typography color="text.secondary" variant="body2">
-                  {address.substring(0, 7) +
-                    (address.length < 5 ? "" : "...") +
-                    address.substring(35, 80)}
-                </Typography>
-              </Tooltip>
-              : <></>
-          }
+          {address !== null ? (
+            <Tooltip title={address} arrow>
+              <Typography color="text.secondary" variant="body2">
+                {address.substring(0, 7) +
+                  (address.length < 5 ? "" : "...") +
+                  address.substring(35, 80)}
+              </Typography>
+            </Tooltip>
+          ) : (
+            <></>
+          )}
           <Box
             style={{ minWidth: "180px" }}
             display="flex"
