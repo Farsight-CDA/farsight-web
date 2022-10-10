@@ -24,7 +24,7 @@ const items = [
     href: "/account",
     icon: <UserIcon fontSize="small" />,
     title: "Account",
-  },
+  }
 ];
 
 export const DashboardSidebar = (props) => {

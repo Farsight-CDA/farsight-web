@@ -1,46 +1,68 @@
 import Head from "next/head";
-import { Box, Container, Grid, Pagination } from "@mui/material";
-import { products } from "../__mocks__/products";
-import { ProductListToolbar } from "../components/product/product-list-toolbar";
-import { ProductCard } from "../components/product/product-card";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { Box, Container, Card, CardContent, TextField, InputAdornment, SvgIcon } from "@mui/material";
+import { Search as SearchIcon } from "../icons/search";
 import { DashboardLayout } from "../components/dashboard-layout";
 
-const Page = () => (
-  <>
-    <Head>
-      <title>Register | Material Kit</title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8,
-      }}
-    >
-      <Container maxWidth={false}>
-        <ProductListToolbar />
-        <Box sx={{ pt: 3 }}>
-          <Grid container spacing={3}>
-            {products.map((product) => (
-              <Grid item key={product.id} lg={4} md={6} xs={12}>
-                <ProductCard product={product} />
-              </Grid>
-            ))}
-          </Grid>
+const Page = () => {
+  const [name, setName] = useState('');
+
+  const router = useRouter();
+
+  const handleKeyDown = e => {
+    if (e.keyCode !== 13) {
+      return;
+    }
+
+    router.push("register/" + name);
+  }
+
+  return (
+    <>
+      <Head>
+        <title>Register | Material Kit</title>
+      </Head>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <Container maxWidth={false}>
+
+        <Box sx={{ mt: 3 }}>
+          <Card>
+            <CardContent>
+              <Box sx={{ maxWidth: 500 }}>
+                <TextField
+                  fullWidth
+                  value={name}
+                  onChange={x => setName(x.target.value)}
+                  onKeyDown={handleKeyDown}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SvgIcon fontSize="small" color="action">
+                          <SearchIcon />
+                        </SvgIcon>
+                      </InputAdornment>
+                    ),
+                  }}
+                  placeholder="Search on-chain name"
+                  variant="outlined"
+                />
+              </Box>
+            </CardContent>
+          </Card>
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            pt: 3,
-          }}
-        >
-          <Pagination color="primary" count={3} size="small" />
-        </Box>
-      </Container>
-    </Box>
-  </>
-);
+
+        </Container>
+      </Box>
+    </>
+  );
+}
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
