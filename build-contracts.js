@@ -3,7 +3,7 @@ const solc = require('solc')
 const path = require('path')
 const typechain = require('typechain')
 
-const contracts_root = "Farsight-Contracts\\src";
+const contracts_root = path.join("Farsight-Contracts", "src");
 const output_root = "contracts";
 const types_out = "types"
 const abi_out = "abi";
