@@ -1,16 +1,41 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import PropTypes, { func } from "prop-types";
 import Web3 from "web3";
+import { RegistrarController } from "../../contracts/types/RegistrarController";
+import abi from "../../contracts/abi/RegistrarController.abi";
+import { getControllerAddress } from "../utils/contract-addresses";
 
-export const AuthContext = createContext({ web3: undefined });
+export const AuthContext = createContext({ web3: null, address: null, chainId: null, walletType: null });
 
 export const AuthProvider = (props) => {
   const { children } = props;
 
+  const [eventsRegistered, setEventsRegistered] = useState(false);
+
+  const isConnected = () => web3 !== null;
+
   const [web3, setWeb3] = useState(null);
   const [address, setAddress] = useState(null);
   const [chainId, setChainId] = useState(null);
-  const [walletType, setWalletType] = useState(0);
+  const [walletType, setWalletType] = useState(null);
+
+  const [controller, setController] = useState(null);
+
+  useEffect(() => {
+    if (!isConnected()){
+      return;
+    }
+    web3.defaultAccount = address;
+  }, [address]);
+
+  useEffect(() => {
+    if (!isConnected()){
+      return;
+    }
+
+    setController(web3.eth.Contract(abi, getControllerAddress(chainId)));
+  }, [chainId]);
+
   const walletTypeRef = useRef();
   walletTypeRef.current = walletType;
   const web3Ref = useRef();
@@ -34,7 +59,8 @@ export const AuthProvider = (props) => {
     setWeb3(null);
     setAddress(null);
     setChainId(null);
-    setWalletType(0);
+    setWalletType(null);
+    setController(null);
   }
 
   function tryConnectEVMBrowserWallet() {
@@ -43,7 +69,7 @@ export const AuthProvider = (props) => {
     }
 
     setWeb3(new Web3(Web3.givenProvider));
-    registerEVMEvents();
+    registerBrowserEVMEvents();
 
     window.ethereum
      .request({ method: "eth_requestAccounts" })
@@ -58,15 +84,17 @@ export const AuthProvider = (props) => {
      });
   }
 
-  function registerEVMEvents() {
-    if (window.ethereum === undefined || window.ethereum === null) {
+  function registerBrowserEVMEvents() {
+    if (eventsRegistered) {
       return;
     }
 
-    window.ethereum.on("accountsChanged", () => {
+    setEventsRegistered(true);
+
+    Web3.givenProvider.on("accountsChanged", () => {
       handleAccountChanged(WalletType.browserEVM);
     });
-    window.ethereum.on("chainChanged", () => {
+    Web3.givenProvider.on("chainChanged", () => {
       handleChainIdChanged(WalletType.browserEVM);
     });
   }
@@ -99,7 +127,7 @@ export const AuthProvider = (props) => {
   }
 
   return (
-    <AuthContext.Provider value={{ web3, toggleConnection, address, chainId }}>
+    <AuthContext.Provider value={{ web3, toggleConnection, address, chainId, controller }}>
       {children}
     </AuthContext.Provider>
   );
