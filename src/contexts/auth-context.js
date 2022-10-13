@@ -5,7 +5,12 @@ import { RegistrarController } from "../../contracts/types/RegistrarController";
 import abi from "../../contracts/abi/RegistrarController.abi";
 import { getControllerAddress } from "../utils/contract-addresses";
 
-export const AuthContext = createContext({ web3: null, address: null, chainId: null, walletType: null });
+export const AuthContext = createContext({
+  web3: null,
+  address: null,
+  chainId: null,
+  walletType: null,
+});
 
 export const AuthProvider = (props) => {
   const { children } = props;
@@ -22,14 +27,14 @@ export const AuthProvider = (props) => {
   const [controller, setController] = useState(null);
 
   useEffect(() => {
-    if (!isConnected()){
+    if (!isConnected()) {
       return;
     }
     web3.defaultAccount = address;
   }, [address]);
 
   useEffect(() => {
-    if (!isConnected()){
+    if (!isConnected()) {
       return;
     }
 
@@ -71,9 +76,7 @@ export const AuthProvider = (props) => {
     setWeb3(new Web3(Web3.givenProvider));
     registerBrowserEVMEvents();
 
-    window.ethereum
-     .request({ method: "eth_requestAccounts" })
-     .then(accounts => {
+    window.ethereum.request({ method: "eth_requestAccounts" }).then((accounts) => {
       if (accounts.length == 0) {
         disconnectWallet();
         return;
@@ -81,7 +84,7 @@ export const AuthProvider = (props) => {
 
       setAddress(accounts[0]);
       setWalletType(WalletType.browserEVM);
-     });
+    });
   }
 
   function registerBrowserEVMEvents() {
@@ -120,7 +123,7 @@ export const AuthProvider = (props) => {
       if (_chainId == 0) {
         disconnectWallet();
         return;
-      } 
+      }
 
       setChainId(_chainId);
     });

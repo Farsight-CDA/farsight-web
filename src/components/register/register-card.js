@@ -3,8 +3,8 @@ import { Avatar, Box, Card, CardContent, Divider, IconButton, Typography } from 
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import Grid from "@mui/material/Unstable_Grid2";
-import { useState } from "react"; // Grid version 2
+import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
+import { useState } from "react";
 
 export const RegisterCard = ({ product }) => {
   const [year, setYear] = useState(1);
