@@ -4,9 +4,13 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../../contexts/auth-context";
+import { mainChainId } from "../../utils/chain-ids";
 
 export const RegisterCard = ({ product }) => {
+  const { chainId } = useContext(AuthContext);
+
   const [year, setYear] = useState(1);
 
   return (
@@ -179,6 +183,7 @@ export const RegisterCard = ({ product }) => {
             </Grid>
           </Grid>
         </Box>
+        <h1>{chainId}</h1>
       </CardContent>
     </Card>
   );

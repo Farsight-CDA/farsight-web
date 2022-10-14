@@ -79,12 +79,13 @@ contract_names.forEach(contract_name => {
 
   let data = JSON.stringify(compiledContract.abi);
 
-  const abiOutFile = path.resolve(abi_output_path, contract_name + '.abi');
+  const abiOutFile = path.resolve(abi_output_path, contract_name + '.abi.json');
+  const tempOutFile = path.resolve(abi_output_path, contract_name + '.abi');
 
-  fs.writeFileSync(abiOutFile, data, 'utf8');
+  fs.writeFileSync(tempOutFile, data, 'utf8');
 
   const cwd = process.cwd();
-  const allFiles = [abiOutFile];
+  const allFiles = [tempOutFile];
 
   typechain.runTypeChain({
     cwd,
@@ -93,4 +94,6 @@ contract_names.forEach(contract_name => {
     outDir: types_output_path,
     target: 'ethers-v5',
   });
+
+  fs.renameSync(tempOutFile, abiOutFile);
 });

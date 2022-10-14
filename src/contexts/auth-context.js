@@ -1,6 +1,9 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { ethers } from "ethers";
+import { IRegistrar } from "../../contracts/types/IRegistrar.ts"
+import IRegistrarABI from "../../contracts/abi/IRegistrar.abi.json";
+import { getControllerAddress } from "../utils/contract-addresses";
 
 export const AuthContext = createContext({
   web3: null,
@@ -21,22 +24,31 @@ export const AuthProvider = (props) => {
   const [chainId, setChainId] = useState(null);
   const [walletType, setWalletType] = useState(null);
 
+  const [registrar, setRegistrar] = useState(null);
   const [controller, setController] = useState(null);
 
-  const isConnected = provider != null;
+  const isConnected = provider != null && registrar != null;
 
   useEffect(() => {
     if (!isConnected) {
       return;
     }
 
-
+    registrar.connect(signer);
   }, [signer]);
 
   useEffect(() => {
-    if (!isConnected) {
+    if (provider == null) {
       return;
     }
+
+    console.log(provider);
+    const iface = new ethers.utils.Interface(IRegistrarABI);
+
+    const registrar = new ethers.Contract(getControllerAddress(chainId), iface, provider);
+    registrar.connect(signer);
+
+    setRegistrar(registrar);
 
     //setController(web3.eth.Contract(abi, getControllerAddress(chainId)));
   }, [chainId]);
@@ -76,15 +88,25 @@ export const AuthProvider = (props) => {
 
     const prov = new ethers.providers.Web3Provider(window.ethereum);
 
-    setProvider(prov);
-
-    prov.send("eth_requestAccounts", []).then((accounts) => {
+    prov.send("eth_requestAccounts", []).then(async (accounts) => {
       if (accounts.length == 0) {
         disconnectWallet();
         return;
       }
 
+      const signer = prov.getSigner();
+
+      if (signer === null || signer === undefined) {
+        disconnectWallet();
+        return;
+      }
+
+      const cId = await signer.getChainId();
+
+      setProvider(prov);
       setAddress(accounts[0]);
+      setChainId(cId);
+      setSigner(signer);
       setWalletType(WalletType.browserEVM);
 
       if (!eventsRegistered) {
@@ -120,23 +142,26 @@ export const AuthProvider = (props) => {
     });
   }
 
-  function handleChainIdChanged(wallet) {
+  async function handleChainIdChanged(wallet) {
     if (wallet != walletTypeRef.current) {
       return;
     }
 
-    const signer = providerRef.current?.getSigner();
+    const prov = new ethers.providers.Web3Provider(window.ethereum);
+    setProvider(prov);
+
+    const signer = prov.getSigner();
 
     if (signer === null || signer === undefined) {
       disconnectWallet();
       return;
     }
 
-    setSigner(signer);
+    const cId = await signer.getChainId();
 
-    signer.getChainId().then(chainId => {
-      setChainId(chainId);
-    });
+    setProvider(prov);
+    setSigner(signer);
+    setChainId(cId);
   }
 
   return (

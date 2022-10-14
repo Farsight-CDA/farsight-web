@@ -7,18 +7,18 @@ import { WatchCard } from "../../components/watch/watch-card";
 import { chains } from "../../__mocks__/chains";
 import { RegisterCard } from "../../components/register/register-card";
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
+
+const fetchOccupation = async name => {
+  return false;
+};
+
 
 const Page = () => {
   const router = useRouter();
   const { name } = router.query;
 
-  const [isOccupied, setIsOccupied] = useState(false);
-
-  const trigger = false;
-
-  useEffect(() => {
-    setIsOccupied(trigger);
-  }, [trigger]);
+  const { data, status } = useQuery(["occupation", name], () => fetchOccupation(name));
 
   return (
     <>
@@ -36,11 +36,11 @@ const Page = () => {
           <Typography sx={{ mb: 3 }} variant="h4">
             Register
           </Typography>
-          {isOccupied ? (
-            <RegisterCard product={addresses[0]} year={1} />
-          ) : (
-            <WatchCard contents={chains} />
-          )}
+          {status === "loading" && <p>Loading....</p>}
+          {status === "error" && <p>There was an error....</p>}
+
+          {status === "success" && data && <WatchCard contents={chains} />}
+          {status === "success" && !data && <RegisterCard product={addresses[0]} year={1} />}
         </Container>
       </Box>
     </>

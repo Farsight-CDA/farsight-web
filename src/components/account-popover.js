@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { Box, Button, MenuItem, MenuList, Popover, Typography } from "@mui/material";
-import Web3 from "web3";
 import { useContext } from "react";
 import { AuthContext } from "../contexts/auth-context";
 

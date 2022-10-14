@@ -9,10 +9,12 @@ import { AuthConsumer, AuthProvider } from "../contexts/auth-context";
 import { createEmotionCache } from "../utils/create-emotion-cache";
 import { registerChartJs } from "../utils/register-chart-js";
 import { theme } from "../theme";
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 
 registerChartJs();
 
 const clientSideEmotionCache = createEmotionCache();
+const queryClient = new QueryClient()
 
 const App = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
@@ -28,11 +30,13 @@ const App = (props) => {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <AuthProvider>
-            <AuthConsumer>
-              {(auth) => (auth.isLoading ? <Fragment /> : getLayout(<Component {...pageProps} />))}
-            </AuthConsumer>
-          </AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+              <AuthConsumer>
+                {(auth) => (auth.isLoading ? <Fragment /> : getLayout(<Component {...pageProps} />))}
+              </AuthConsumer>
+            </AuthProvider>
+          </QueryClientProvider>
         </ThemeProvider>
       </LocalizationProvider>
     </CacheProvider>
