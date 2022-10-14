@@ -26,10 +26,7 @@ const Page = () => {
     return true;
   };
 
-
   const { data, status } = useQuery(["occupation", name], fetchOccupation);
-
-
 
   return (
     <>
@@ -50,7 +47,7 @@ const Page = () => {
           {status === "loading" && <p>Loading....</p>}
           {status === "error" && <p>There was an error....</p>}
 
-          {status === "success" && data && <WatchCard contents={chains} />}
+          {status === "success" && data && <WatchCard contents={chains} name={name} />}
           {status === "success" && !data && <RegisterCard product={addresses[0]} year={1} />}
         </Container>
       </Box>

@@ -1,28 +1,22 @@
-import { v4 as uuid } from "uuid";
-
 export const chains = [
   {
-    id: uuid(),
-    ADDRESS: "leonlolly",
-    CHAINID: "5",
-    EXPIRATIONDATE: "22.05.2028",
+    available: true,
+    content: [{ chainId: "137", owner: "fggte", expiration: 345476765, isKeeper: true }],
   },
   {
-    id: uuid(),
-    ADDRESS: "fvfv",
-    CHAINID: "8",
-    EXPIRATIONDATE: "22.05.2027",
+    available: true,
+    content: [{ chainId: "137", owner: "ertgb", expiration: 456566577657657, isKeeper: false }],
   },
   {
-    id: uuid(),
-    ADDRESS: "evw",
-    CHAINID: "8",
-    EXPIRATIONDATE: "22.05.2027",
+    available: true,
+    content: [{ chainId: "56", owner: "fvw", expiration: 765959765, isKeeper: false }],
   },
   {
-    id: uuid(),
-    ADDRESS: "nter",
-    CHAINID: "8",
-    EXPIRATIONDATE: "22.05.2027",
+    available: true,
+    content: [{ chainId: "97", owner: "wevf", expiration: 1665774772081, isKeeper: false }],
+  },
+  {
+    available: true,
+    content: [{ chainId: "80001", owner: "wefvw", expiration: 566786685768755, isKeeper: false }],
   },
 ];
