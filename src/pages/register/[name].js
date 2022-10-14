@@ -6,19 +6,30 @@ import { addresses } from "../../__mocks__/addresses";
 import { WatchCard } from "../../components/watch/watch-card";
 import { chains } from "../../__mocks__/chains";
 import { RegisterCard } from "../../components/register/register-card";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useQuery } from "react-query";
-
-const fetchOccupation = async name => {
-  return false;
-};
-
+import { mainChainId } from "../../utils/chain-ids";
+import { AuthContext } from "../../contexts/auth-context";
+import { namehash } from "../../utils/hash";
 
 const Page = () => {
   const router = useRouter();
   const { name } = router.query;
+  const { chainId, isConnected, registrar } = useContext(AuthContext);
 
-  const { data, status } = useQuery(["occupation", name], () => fetchOccupation(name));
+  const fetchOccupation = async () => {
+    if (isConnected && chainId == mainChainId) {
+      const expiration = await registrar.nameExpires(namehash(name));
+      return expiration != 0;
+    }
+
+    return true;
+  };
+
+
+  const { data, status } = useQuery(["occupation", name], fetchOccupation);
+
+
 
   return (
     <>

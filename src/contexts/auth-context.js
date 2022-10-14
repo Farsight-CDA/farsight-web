@@ -42,7 +42,6 @@ export const AuthProvider = (props) => {
       return;
     }
 
-    console.log(provider);
     const iface = new ethers.utils.Interface(IRegistrarABI);
 
     const registrar = new ethers.Contract(getControllerAddress(chainId), iface, provider);
@@ -165,7 +164,7 @@ export const AuthProvider = (props) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isConnected, provider, toggleConnection, address, chainId, controller }}>
+    <AuthContext.Provider value={{ isConnected, provider, toggleConnection, address, chainId, controller, registrar }}>
       {children}
     </AuthContext.Provider>
   );
