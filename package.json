@@ -27,6 +27,7 @@
     "@zalter/identity-js": "1.2.1",
     "chart.js": "3.9.1",
     "date-fns": "2.29.3",
+    "ethers": "^5.7.1",
     "formik": "2.2.9",
     "next": "12.3.0",
     "nprogress": "0.2.0",
@@ -36,7 +37,6 @@
     "react-dom": "18.2.0",
     "react-perfect-scrollbar": "1.5.8",
     "uuid": "9.0.0",
-    "web3": "^1.8.0",
     "yup": "0.32.11"
   },
   "devDependencies": {

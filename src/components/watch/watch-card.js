@@ -13,7 +13,6 @@ const ChainContent = ({ content }) => {
     }
   }, [content]);
 
-  console.log(content);
   return (
     <>
       <Grid container spacing={0.5}>

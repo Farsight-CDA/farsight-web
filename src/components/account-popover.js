@@ -6,16 +6,11 @@ import { AuthContext } from "../contexts/auth-context";
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open, ...other } = props;
-  const { web3, ConnectDisconnectToWallet, accounts, chainid, walletConection } =
-    useContext(AuthContext);
+  const { provider, toggleConnection, address, chainId, isConnected } = useContext(AuthContext);
 
   async function WalletConection() {
     const validChainID = [1, 56, 137, 43114, 250, 1284, 1313161554];
-    const web3 = new Web3();
-    window.w3 = web3;
-    console.log(web3);
-    console.log(web3.eth.getChainId());
-    return validChainID.includes(web3.eth.getChainId());
+    return validChainID.includes(chainId);
   }
 
   return (
@@ -49,8 +44,8 @@ export const AccountPopover = (props) => {
           px: 2,
         }}
       ></Box>
-      <Button onClick={ConnectDisconnectToWallet}>
-        {walletConection ? "Disconnect Wallet" : "Connect Wallet"}
+      <Button onClick={toggleConnection}>
+        {isConnected ? "Disconnect Wallet" : "Connect Wallet"}
       </Button>
     </Popover>
   );

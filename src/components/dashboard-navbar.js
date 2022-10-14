@@ -25,7 +25,7 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 }));
 
 export const DashboardNavbar = (props) => {
-  const { web3, toggleConnection, address, chainId } = useContext(AuthContext);
+  const { isConnected, toggleConnection, address, chainId } = useContext(AuthContext);
 
   const { onSidebarOpen, ...other } = props;
   const settingsRef = useRef(null);
@@ -111,8 +111,9 @@ export const DashboardNavbar = (props) => {
             justifyContent="flex-end"
             alignItems="flex-end"
           >
+            <p>{isConnected}</p>
             <Button onClick={toggleConnection}>
-              {web3 !== null ? "Disconnect Wallet" : "Connect Wallet"}
+              {isConnected ? "Disconnect Wallet" : "Connect Wallet"}
             </Button>
           </Box>
         </Toolbar>
