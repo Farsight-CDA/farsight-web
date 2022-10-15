@@ -20,44 +20,17 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { useState, useContext } from "react";
 import { AuthContext } from "../../contexts/auth-context";
-import { mainChainId } from "../../utils/chain-ids";
+import { mainChainId, isSupported } from "../../utils/chain-ids";
+import { RegisterStatusCard } from "./register-status-card";
 
 export const RegisterCard = ({ product, name }) => {
-  const { chainId } = useContext(AuthContext);
+  const { isConnected, chainId } = useContext(AuthContext);
+  const isSupportedChain = isSupported(chainId);
 
   const [year, setYear] = useState(1);
 
-  const steps = [
-    {
-      label: "Select campaign settings",
-      description: `Your wallet will open and you will be asked to confirm the first of two transactions
-                required for registration. If the second transaction is not processed within 7 days
-                of the first, you will need to start again from step 1.`,
-    },
-    {
-      label: "Create an ad group",
-      description:
-        "The waiting period is required to ensure another person hasn’t tried to register the same name and protect you after your request",
-    },
-    {
-      label: "Create an ad",
-      description: `Click ‘register’ and your wallet will re-open. Only after the 2nd transaction isconfirmed you'll know if you got the name.`,
-    },
-  ];
-
-  const [activeStep, setActiveStep] = useState(0);
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
+  const activeStep = !isConnected || !isSupportedChain ? 0
+                                                       : 1;
 
   return (
     <>
@@ -68,13 +41,12 @@ export const RegisterCard = ({ product, name }) => {
               <Grid container direction={"row"}>
                 <Grid xs={6}>
                   <Typography align="left" color="textPrimary" gutterBottom variant="h5">
-                    {name}
+                    {name}.far
                   </Typography>
                 </Grid>
                 <Grid xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                   <Button
                     variant="contained"
-                    style={{ display: "flex", justifyContent: "flex-end" }}
                   >
                     BUY
                   </Button>
@@ -198,40 +170,7 @@ export const RegisterCard = ({ product, name }) => {
         <Grid xs={12}>
           <Card>
             <Box sx={{ maxWidth: 400 }}>
-              <Stepper activeStep={activeStep} orientation="vertical">
-                {steps.map((step, index) => (
-                  <Step key={step.label}>
-                    <StepLabel
-                      optional={
-                        index === 2 ? <Typography variant="caption">Last step</Typography> : null
-                      }
-                    >
-                      {step.label}
-                    </StepLabel>
-                    <StepContent>
-                      <Typography>{step.description}</Typography>
-                      <Box sx={{ mb: 2 }}>
-                        <div>
-                          <Button variant="contained" onClick={handleNext} sx={{ mt: 1, mr: 1 }}>
-                            {index === steps.length - 1 ? "Finish" : "Continue"}
-                          </Button>
-                          <Button disabled={index === 0} onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
-                            Back
-                          </Button>
-                        </div>
-                      </Box>
-                    </StepContent>
-                  </Step>
-                ))}
-              </Stepper>
-              {activeStep === steps.length && (
-                <Paper square elevation={0} sx={{ p: 3 }}>
-                  <Typography>All steps completed - you&apos;re finished</Typography>
-                  <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                    Reset
-                  </Button>
-                </Paper>
-              )}
+              <RegisterStatusCard></RegisterStatusCard>
             </Box>
           </Card>
         </Grid>

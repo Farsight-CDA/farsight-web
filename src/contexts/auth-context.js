@@ -2,7 +2,10 @@ import { createContext, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { ethers } from "ethers";
 import { IRegistrar } from "../../contracts/types/IRegistrar.ts"
+
 import IRegistrarABI from "../../contracts/abi/IRegistrar.abi.json";
+import IRegistrarControllerABI from "../../contracts/abi/IRegistrarController.abi.json";
+
 import { getControllerAddress } from "../utils/contract-addresses";
 
 export const AuthContext = createContext({
@@ -35,6 +38,7 @@ export const AuthProvider = (props) => {
     }
 
     registrar.connect(signer);
+    controller.connect(signer);
   }, [signer]);
 
   useEffect(() => {
@@ -42,14 +46,17 @@ export const AuthProvider = (props) => {
       return;
     }
 
-    const iface = new ethers.utils.Interface(IRegistrarABI);
+    const iRegistrarABI = new ethers.utils.Interface(IRegistrarABI);
+    const iRegistrarControllerABI = new ethers.utils.Interface(IRegistrarControllerABI);
 
-    const registrar = new ethers.Contract(getControllerAddress(chainId), iface, provider);
+    const registrar = new ethers.Contract(getRegistrarAddress(chainId), iRegistrarABI, provider);
     registrar.connect(signer);
 
-    setRegistrar(registrar);
+    const controller = new ethers.Contract(getControllerAddress(chainId), iRegistrarControllerABI, provider);
+    controller.connect(signer);
 
-    //setController(web3.eth.Contract(abi, getControllerAddress(chainId)));
+    setRegistrar(registrar);
+    setController(controller);
   }, [chainId]);
 
   const walletTypeRef = useRef();
