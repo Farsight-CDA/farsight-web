@@ -18,12 +18,12 @@ const Page = () => {
   const { chainId, isConnected, registrar } = useContext(AuthContext);
 
   const fetchOccupation = async () => {
-    if (isConnected && chainId == mainChainId) {
+    if (isConnected && chainId === mainChainId) {
       const expiration = await registrar.nameExpires(namehash(name));
       return expiration != 0;
     }
 
-    return true;
+    return false;
   };
 
   const { data, status } = useQuery(["occupation", name], fetchOccupation);
@@ -48,7 +48,7 @@ const Page = () => {
           {status === "error" && <p>There was an error....</p>}
 
           {status === "success" && data && <WatchCard contents={chains} name={name} />}
-          {status === "success" && !data && <RegisterCard product={addresses[0]} year={1} />}
+          {status === "success" && !data && <RegisterCard product={addresses[0]} name={name} />}
         </Container>
       </Box>
     </>
