@@ -4,7 +4,7 @@ const path = require('path')
 const typechain = require('typechain');
 const { concat } = require("./node_modules/ethers/lib/utils");
 
-const contract_names = ["IMainRegistrarController", "IRegistrar"];
+const contract_names = ["IMainRegistrar", "IRegistrar"];
 const contracts_root = path.join("Farsight-Contracts", "src");
 const output_root = "contracts";
 const types_out = "types"
