@@ -10,9 +10,22 @@ import { fetchRegistration } from "../../utils/HinterEnde";
 const Page = () => {
   const router = useRouter();
   const { name } = router.query;
-  const { data, status } = useQuery(["registration", name], () => fetchRegistration(name));
 
-  console.log(data);
+  console.log(name);
+
+  return (
+    <>
+      {(name == undefined)
+        ? <p>Loading</p>
+        : <InnerPage name={name}></InnerPage>
+      }
+    </>
+  );
+}
+
+const InnerPage = ({ name }) => {
+  const router = useRouter();
+  const { data, status } = useQuery(["registration", name], () => fetchRegistration(name));
 
   return (
     <>
