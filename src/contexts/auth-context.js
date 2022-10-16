@@ -8,7 +8,7 @@ import IRegistrarControllerABI from "../../contracts/abi/IRegistrarController.ab
 import IERC20PaymentProviderABI from "../../contracts/abi/IERC20PaymentProvider.abi.json";
 import IERC20ABI from "../../contracts/abi/IERC20.abi.json"
 
-import { getRegistrarAddress, getControllerAddress, getPaymentProviderAddress } from "../utils/contract-addresses";
+import { getRegistrarAddress, getControllerAddress } from "../utils/contract-addresses";
 
 export const AuthContext = createContext({
   web3: null,
@@ -113,7 +113,10 @@ export const AuthProvider = (props) => {
 
     var _registrar = new ethers.Contract(getRegistrarAddress(_chainId), iRegistrarABI, _signer);
     var _controller = new ethers.Contract(getControllerAddress(_chainId), iRegistrarControllerABI, _signer);
-    var _paymentProvider = new ethers.Contract(getPaymentProviderAddress(_chainId), iERC20PaymentProviderABI, _signer);
+
+    const _paymentProviderAddress = await _controller.getPaymentProvider();
+
+    var _paymentProvider = new ethers.Contract(_paymentProviderAddress, iERC20PaymentProviderABI, _signer);
 
     const _paymentTokenAddress = await _paymentProvider.getTokenAddress();
 

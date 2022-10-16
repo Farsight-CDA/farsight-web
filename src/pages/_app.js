@@ -10,6 +10,7 @@ import { createEmotionCache } from "../utils/create-emotion-cache";
 import { registerChartJs } from "../utils/register-chart-js";
 import { theme } from "../theme";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import { AxelarProvider } from "../contexts/axelar-context";
 
 registerChartJs();
 
@@ -31,11 +32,13 @@ const App = (props) => {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              <AuthConsumer>
-                {(auth) => (auth.isLoading ? <Fragment /> : getLayout(<Component {...pageProps} />))}
-              </AuthConsumer>
-            </AuthProvider>
+            <AxelarProvider>
+              <AuthProvider>
+                <AuthConsumer>
+                  {(auth) => (auth.isLoading ? <Fragment /> : getLayout(<Component {...pageProps} />))}
+                </AuthConsumer>
+              </AuthProvider>
+            </AxelarProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </LocalizationProvider>

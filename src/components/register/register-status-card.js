@@ -194,13 +194,13 @@ export const RegisterStatusCard = ({ name, duration }) => {
           Approve Farsight for USDC
         </StepLabel>
         <StepContent>
-          {!isApproved && <Button
+          {!isApproved && <><h1>Not Approved!</h1><Button
             disabled={waitingForTx}
             onClick={postApproveTransaction}
             variant="contained"
           >
             Approve
-          </Button>}
+          </Button></>}
 
           {!hasBalance && <Typography>
             Your balance is too low!
@@ -242,7 +242,7 @@ export const RegisterStatusCard = ({ name, duration }) => {
 
           <Button
             disabled={!waitCompleted}
-            onClick={() => setActiveStep(3)}
+            onClick={() => setActiveStep(4)}
             variant="contained"
           >
             Continue
