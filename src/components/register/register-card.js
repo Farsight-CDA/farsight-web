@@ -181,5 +181,5 @@ export const RegisterCard = ({ name }) => {
 };
 
 RegisterCard.propTypes = {
-  name: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
 };
