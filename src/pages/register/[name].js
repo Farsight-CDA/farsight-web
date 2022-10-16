@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { Box, Container, Grid, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { DashboardLayout } from "../../components/dashboard-layout";
 import { WatchCard } from "../../components/watch/watch-card";
 import { RegisterCard } from "../../components/register/register-card";
@@ -11,17 +11,8 @@ const Page = () => {
   const router = useRouter();
   const { name } = router.query;
 
-  console.log(name);
-
-  return (
-    <>
-      {(name == undefined)
-        ? <p>Loading</p>
-        : <InnerPage name={name}></InnerPage>
-      }
-    </>
-  );
-}
+  return <>{name == undefined ? <p>Loading</p> : <InnerPage name={name}></InnerPage>}</>;
+};
 
 const InnerPage = ({ name }) => {
   const router = useRouter();
