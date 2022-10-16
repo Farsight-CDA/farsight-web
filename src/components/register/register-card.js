@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   Divider,
+  duration,
   IconButton,
   Paper,
   Step,
@@ -23,15 +24,16 @@ import { AuthContext } from "../../contexts/auth-context";
 import { mainChainId, isSupported } from "../../utils/chain-ids";
 import { RegisterStatusCard } from "./register-status-card";
 import { useQuery } from "react-query";
+import { namehash } from "../../utils/hash";
 
 export const RegisterCard = ({ product, name }) => {
-  const fetchPriceData = async () => {
+  const fetchPriceData = async (name, expiry, duration) => {
     const response = await fetch("/api/getPrice", {
       method: "POST",
       body: JSON.stringify({
         name: name,
-        expiry: "0x100",
-        duration: "0x100",
+        expiry: expiry,
+        duration: duration,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -45,10 +47,86 @@ export const RegisterCard = ({ product, name }) => {
     };
   };
 
+  const fetchRegistration = async (name) => {
+    const response = await fetch("/api/getRegistration", {
+      method: "POST",
+      body: JSON.stringify({
+        name: namehash(name),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  };
+  const fetchPlainName = async (name) => {
+    const response = await fetch("/api/getPlainName", {
+      method: "POST",
+      body: JSON.stringify({
+        name: namehash(name),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  };
+  const fetchEstimateRenewGuess = async (
+    chain_id,
+    name,
+    payload,
+    reg_version,
+    duration,
+    expiration
+  ) => {
+    const response = await fetch("/api/estimateRenewGuess", {
+      method: "POST",
+      body: JSON.stringify({
+        chain_id: chain_id,
+        name: name,
+        reg_version: reg_version,
+        duration: duration,
+        expiration: expiration,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  };
+  const fetchEstimateRegisterGuess = async (
+    chain_id,
+    plain_name,
+    name,
+    owner,
+    duration,
+    expiration
+  ) => {
+    const response = await fetch("/api/estimateRegisterGuess", {
+      method: "POST",
+      body: JSON.stringify({
+        chain_id: chain_id,
+        plain_name: plain_name,
+        name: name,
+        owner: owner,
+        duration: duration,
+        expiration: expiration,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  };
+
   const { isConnected, chainId } = useContext(AuthContext);
   const isSupportedChain = isSupported(chainId);
 
-  const { data: priceData, status } = useQuery(["price", name, year], fetchPriceData);
+  const { data: priceData, status } = useQuery(["price", name, year], fetchPriceData(name));
 
   const [year, setYear] = useState(1);
 
@@ -63,9 +141,6 @@ export const RegisterCard = ({ product, name }) => {
                   <Typography align="left" color="textPrimary" gutterBottom variant="h5">
                     {name}.far
                   </Typography>
-                </Grid>
-                <Grid xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Button variant="contained">BUY</Button>
                 </Grid>
               </Grid>
             </CardContent>
