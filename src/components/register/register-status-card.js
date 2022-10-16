@@ -4,7 +4,6 @@ import { mainChainId, isSupported } from "../../utils/chain-ids";
 import { commitment, namehash } from "../../utils/hash";
 import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
-import { func } from "prop-types";
 
 const minCommitmentAge = 30;
 const maxCommitmentAge = 1800;

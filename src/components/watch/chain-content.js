@@ -10,8 +10,9 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import * as React from "react";
 
-export const ChainContent = ({ chainId, expiration, localOwner, registrationVersion, ownerChangeVersion }) => {
+export const ChainContent = ({ chainState }) => {
   const { chainId: connectedChainId } = useContext(AuthContext);
+  const { chainId, expiration, localOwner, registrationVersion, ownerChangeVersion } = chainState;
 
   const isExpired = expiration <= new Date().getTime() / 1000;
   const basepath = "/static/images/chainlogos/";
