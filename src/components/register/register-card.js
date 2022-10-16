@@ -8,6 +8,11 @@ import {
   Divider,
   duration,
   IconButton,
+  Paper,
+  Step,
+  StepContent,
+  StepLabel,
+  Stepper,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -16,114 +21,31 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { useState, useContext } from "react";
 import { AuthContext } from "../../contexts/auth-context";
-import { mainChainId, isSupported } from "../../utils/chain-ids";
+import { isSupported } from "../../utils/chain-ids";
 import { RegisterStatusCard } from "./register-status-card";
 import { useQuery } from "react-query";
+import { fetchEstimateRegisterGas, fetchPriceData } from "../../utils/HinterEnde";
 import { namehash } from "../../utils/hash";
 
-export const RegisterCard = ({ product, name }) => {
-  const fetchPriceData = async (name, expiry, duration) => {
-    const response = await fetch("/api/getPrice", {
-      method: "POST",
-      body: JSON.stringify({
-        name: name,
-        expiry: expiry,
-        duration: duration,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const result = await response.json();
-    return {
-      token: result.token,
-      amount: Number((100n * BigInt(result.amount)) / BigInt(Math.pow(10, 6))) / 100,
-    };
-  };
-
-  const fetchRegistration = async (name) => {
-    const response = await fetch("/api/getRegistration", {
-      method: "POST",
-      body: JSON.stringify({
-        name: namehash(name),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    return await response.json();
-  };
-  const fetchPlainName = async (name) => {
-    const response = await fetch("/api/getPlainName", {
-      method: "POST",
-      body: JSON.stringify({
-        name: namehash(name),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    return await response.json();
-  };
-  const fetchEstimateRenewGuess = async (
-    chain_id,
-    name,
-    payload,
-    reg_version,
-    duration,
-    expiration
-  ) => {
-    const response = await fetch("/api/estimateRenewGuess", {
-      method: "POST",
-      body: JSON.stringify({
-        chain_id: chain_id,
-        name: name,
-        reg_version: reg_version,
-        duration: duration,
-        expiration: expiration,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    return await response.json();
-  };
-  const fetchEstimateRegisterGuess = async (
-    chain_id,
-    plain_name,
-    name,
-    owner,
-    duration,
-    expiration
-  ) => {
-    const response = await fetch("/api/estimateRegisterGuess", {
-      method: "POST",
-      body: JSON.stringify({
-        chain_id: chain_id,
-        plain_name: plain_name,
-        name: name,
-        owner: owner,
-        duration: duration,
-        expiration: expiration,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    return await response.json();
-  };
-
-  const { isConnected, chainId } = useContext(AuthContext);
+export const RegisterCard = ({ name }) => {
+  const { isConnected, chainId, address } = useContext(AuthContext);
   const isSupportedChain = isSupported(chainId);
 
-  const { data: priceData, status } = useQuery(["price", name, year], fetchPriceData(name));
-
   const [year, setYear] = useState(1);
+
+  const { data: priceData, status } = useQuery(["price", name, year, chainId], () => {
+    const registerPrice = fetchPriceData(name, 0, year * 365 * 24 * 60);
+    const registerGas = fetchEstimateRegisterGas(
+      chainId,
+      name,
+      namehash(name),
+      address,
+      year * 365 * 24 * 60
+    );
+    return { registerPrice: registerPrice, registerGas: registerGas };
+  });
+
+  console.log(priceData?.registerPrice?.amount);
 
   return (
     <>
@@ -199,7 +121,7 @@ export const RegisterCard = ({ product, name }) => {
                   </Typography>
                   <Divider />
                   {/*<Typography color="textPrimary" gutterBottom variant="h5" mt={"0.2rem"}>*/}
-                  {status === "success" && <p>{priceData.amount} USDC</p>}
+                  {status === "success" && <p>{priceData.registerPrice.amount} USDC</p>}
                   {status === "loading" && <p>Loading...</p>}
                   {status === "error" && <p>Error!</p>}
                   {/*</Typography>*/}
@@ -259,5 +181,5 @@ export const RegisterCard = ({ product, name }) => {
 };
 
 RegisterCard.propTypes = {
-  product: PropTypes.object.isRequired,
+  name: PropTypes.object.isRequired,
 };
