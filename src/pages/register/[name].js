@@ -12,6 +12,8 @@ const Page = () => {
   const { name } = router.query;
   const { data, status } = useQuery(["registration", name], () => fetchRegistration(name));
 
+  console.log(data);
+
   return (
     <>
       <Head>
@@ -31,8 +33,8 @@ const Page = () => {
           {status === "loading" && <p>Loading....</p>}
           {status === "error" && <p>There was an error....</p>}
 
-          {status === "success" && !data.isAvailable && <WatchCard name={name} registration={data} />}
-          {status === "success" && data.isAvailable && <RegisterCard name={name} />}
+          {status === "success" && !data.available && <WatchCard name={name} registration={data} />}
+          {status === "success" && data.available && <RegisterCard name={name} />}
         </Container>
       </Box>
     </>
