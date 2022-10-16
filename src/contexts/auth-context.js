@@ -109,6 +109,9 @@ export const AuthProvider = (props) => {
   }, []);
 
   async function initWallet() {
+    if (window.ethereum === undefined) {
+      return;
+    }
     const _provider = new ethers.providers.Web3Provider(window.ethereum);
 
     const addresses = await _provider.listAccounts();
