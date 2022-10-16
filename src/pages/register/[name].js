@@ -4,7 +4,6 @@ import { Box, Container, Grid, Typography } from "@mui/material";
 import { DashboardLayout } from "../../components/dashboard-layout";
 import { addresses } from "../../__mocks__/addresses";
 import { WatchCard } from "../../components/watch/watch-card";
-import { chains } from "../../__mocks__/chains";
 import { RegisterCard } from "../../components/register/register-card";
 import { useEffect, useState, useContext } from "react";
 import { useQuery } from "react-query";
@@ -47,7 +46,7 @@ const Page = () => {
           {status === "loading" && <p>Loading....</p>}
           {status === "error" && <p>There was an error....</p>}
 
-          {status === "success" && data && <WatchCard contents={chains} name={name} />}
+          {status === "success" && data && <WatchCard name={name} />}
           {status === "success" && !data && <RegisterCard product={addresses[0]} name={name} />}
         </Container>
       </Box>

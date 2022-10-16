@@ -1,26 +1,34 @@
-export const chainIdToName = {
-  1: "Ethereum Main Network (Mainnet)",
-  3: "Ropsten Test Network",
-  4: "Rinkeby Test Network",
-  5: "Goerli Test Network",
-  42: "Kovan Test Network",
-  137: "Polygon Main Network",
-  80001: "Mumbai Test Network",
-  43114: "Avalanche C-Chain Main Network",
-  43113: "Fuji Test Network",
-  1088: "Metis Andromeda Main Network",
-  588: "Metis Stardust Test Network",
-  1313161554: "Aurora Main Network",
-  1313161555: "Aurora Test Network",
-  56: "Binance Smart Chain Main Network",
-  97: "Binance Smart Chain Test Network",
-  250: "Fantom Opera Main Network",
-  4002: "Fantom Test Network",
+export function getChainNameByChainId(chainId) {
+  switch (chainId) {
+    case 1: return "Ethereum Main Network (Mainnet)";
+    case 3: return "Ropsten Test Network";
+    case 4: return "Rinkeby Test Network";
+    case 5: return "Goerli Test Network";
+    case 42: return "Kovan Test Network";
+    case 137: return "Polygon Main Network";
+    case 80001: return "Mumbai Test Network";
+    case 43114: return "Avalanche C-Chain Main Network";
+    case 43113: return  "Fuji Test Network";
+    case 1088: return "Metis Andromeda Main Network";
+    case 588: return "Metis Stardust Test Network";
+    case 1313161554: return "Aurora Main Network";
+    case 1313161555: return "Aurora Test Network";
+    case 56: return "Binance Smart Chain Main Network";
+    case 97: return "Binance Smart Chain Test Network";
+    case 250: return "Fantom Opera Main Network";
+    case 4002: return "Fantom Test Network";
+  }
+
+  return null;
 };
 
-export const chainIdToSvg = {
-  137: "polygon-matic.svg",
-  80001: "polygon-matic.svg",
-  56: "binance-smart-chain.svg",
-  97: "binance-smart-chain.svg",
-};
+export function getLogoNameByChainId(chainId) {
+  switch (chainId) {
+    case 137: return "polygon-matic.svg";
+    case 80001: return "polygon-matic.svg";
+    case 56: return "binance-smart-chain.svg";
+    case 97: return "binance-smart-chain.svg";
+  }
+
+  return null;
+}
