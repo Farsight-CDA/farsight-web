@@ -5,8 +5,8 @@ export const fetchPriceData = async (name, expiry, duration) => {
     method: "POST",
     body: JSON.stringify({
       name: name,
-      expiry: expiry,
-      duration: duration,
+      expiry: BigInt(expiry).toString(16),
+      duration: BigInt(duration).toString(16),
     }),
     headers: {
       "Content-Type": "application/json",
@@ -51,10 +51,8 @@ export const fetchPlainName = async (name) => {
 export const fetchEstimateRenewGuess = async (
   chain_id,
   name,
-  payload,
   reg_version,
-  duration,
-  expiration
+  duration
 ) => {
   const response = await fetch("/api/estimateRenewGuess", {
     method: "POST",
@@ -62,8 +60,7 @@ export const fetchEstimateRenewGuess = async (
       chain_id: chain_id,
       name: name,
       reg_version: reg_version,
-      duration: duration,
-      expiration: expiration,
+      duration: BigInt(duration).toString(16)
     }),
     headers: {
       "Content-Type": "application/json",
@@ -81,7 +78,7 @@ export const fetchEstimateRegisterGas = async (chain_id, plain_name, name, owner
       plain_name: plain_name,
       name: name,
       owner: owner,
-      duration: duration,
+      duration: BigInt(duration).toString(16),
     }),
     headers: {
       "Content-Type": "application/json",
