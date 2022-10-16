@@ -65,7 +65,6 @@ export const RegisterStatusCard = ({ name, duration }) => {
 
   async function loadInitialValues() {
     if (!isConnected) {
-      console.log(isConnected);
       setPrice(null);
       setApprovedBalance(0);
       setBalance(0);
@@ -118,7 +117,7 @@ export const RegisterStatusCard = ({ name, duration }) => {
       const result = await receipt.wait();
 
       if (result.status != 1) {
-        console.log("There was an error, please try again!");
+        alert("There was an error, please try again!");
         return;
       }
 
@@ -141,7 +140,7 @@ export const RegisterStatusCard = ({ name, duration }) => {
       const result = await receipt.wait();
 
       if (result.status != 1) {
-        console.log("There was an error, please try again!");
+        alert("There was an error, please try again!");
         return;
       }
 
@@ -165,7 +164,7 @@ export const RegisterStatusCard = ({ name, duration }) => {
       const result = await receipt.wait();
 
       if (result.status != 1) {
-        console.log("There was an error, please try again!");
+        alert("There was an error, please try again!");
         return;
       }
 
