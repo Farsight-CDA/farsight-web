@@ -6,7 +6,7 @@ import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/
 import LinearProgress from "@mui/material/LinearProgress";
 import { func } from "prop-types";
 
-const minCommitmentAge = 180;
+const minCommitmentAge = 30;
 const maxCommitmentAge = 1800;
 
 export const RegisterStatusCard = ({ name, duration }) => {

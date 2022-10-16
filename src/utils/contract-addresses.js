@@ -3,9 +3,9 @@ import { polygonChainId, bscChainId } from "./chain-ids";
 export const getRegistrarAddress = (chainId) => {
   switch (chainId) {
     case polygonChainId:
-      return "0x25a511f904b7855d4FaCdBb0294f73788f4427a8";
+      return "0x388a13e27D9a768e4d057a25045B7261AAE63745";
     case bscChainId:
-      return "0xc9d871542fdA15F320CA63E6Fd349a9aF083E39b";
+      return "0x0347679F63316a351c6213A32c04C593b72b9B83";
     default:
       return null;
   }
@@ -14,9 +14,9 @@ export const getRegistrarAddress = (chainId) => {
 export const getControllerAddress = (chainId) => {
   switch (chainId) {
     case polygonChainId:
-      return "0xf089F11e3abc5D8964787925E924a7B7619f54E4";
+      return "0xB31e1744bEb49Dce964714bC0BCF56Cb599af677";
     case bscChainId:
-      return "0x21d49d1f71127b4EBb4d7C09CA9417376A202396";
+      return "0xc2fe0Cc282BD149748e7bF42A5f67407CF978824";
     default:
       return null;
   }
