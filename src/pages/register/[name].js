@@ -11,8 +11,15 @@ const Page = () => {
   const router = useRouter();
   const { name } = router.query;
 
-  return <>{name == undefined ? <p>Loading</p> : <InnerPage name={name}></InnerPage>}</>;
-};
+  return (
+    <>
+      {(name == undefined)
+        ? <p>Loading</p>
+        : <InnerPage name={name}></InnerPage>
+      }
+    </>
+  );
+}
 
 const InnerPage = ({ name }) => {
   const router = useRouter();
