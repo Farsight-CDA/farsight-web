@@ -33,19 +33,18 @@ export const RegisterCard = ({ name }) => {
 
   const [year, setYear] = useState(1);
 
-  const { data: priceData, status } = useQuery(["price", name, year, chainId], () => {
-    const registerPrice = fetchPriceData(name, 0, year * 365 * 24 * 60);
-    const registerGas = fetchEstimateRegisterGas(
-      chainId,
-      name,
-      namehash(name),
-      address,
-      year * 365 * 24 * 60
-    );
-    return { registerPrice: registerPrice, registerGas: registerGas };
-  });
+  const { data: priceData, status } = useQuery(["price", name, year, chainId], async () => {
+    const registerPrice = await fetchPriceData(name, 0, year * 365 * 24 * 60);
+    //    const registerGas = await fetchEstimateRegisterGas(
+    //      chainId,
+    //      name,
+    //      namehash(name),
+    //      address,
+    //      year * 365 * 24 * 60
+    //    );
 
-  console.log(priceData?.registerPrice?.amount);
+    return { registerPrice: registerPrice };
+  });
 
   return (
     <>
