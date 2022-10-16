@@ -9,9 +9,13 @@ import {
   TextField,
   InputAdornment,
   SvgIcon,
+  Grid,
+  Typography,
 } from "@mui/material";
 import { Search as SearchIcon } from "../icons/search";
 import { DashboardLayout } from "../components/dashboard-layout";
+import { chainIdToSvg } from "../utils/ChainTranslation";
+import * as React from "react";
 
 const Page = () => {
   const [name, setName] = useState("");
@@ -26,6 +30,8 @@ const Page = () => {
     router.push("register/" + name);
   };
 
+  const basepath = "/static/images/chainlogos/";
+
   return (
     <>
       <Head>
@@ -38,32 +44,45 @@ const Page = () => {
           py: 8,
         }}
       >
-        <Container maxWidth={false}>
-          <Box sx={{ mt: 3 }}>
-            <Card>
-              <CardContent>
-                <Box sx={{ maxWidth: 500 }}>
-                  <TextField
-                    fullWidth
-                    value={name}
-                    onChange={(x) => setName(x.target.value)}
-                    onKeyDown={handleKeyDown}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SvgIcon fontSize="small" color="action">
-                            <SearchIcon />
-                          </SvgIcon>
-                        </InputAdornment>
-                      ),
-                    }}
-                    placeholder="Search on-chain name"
-                    variant="outlined"
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
+        <Container maxWidth="lg">
+          <Grid
+            container
+            spacing={1}
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{ minHeight: "30vh" }}
+          >
+            <Grid item xs={12}>
+              <img src={basepath + "binance-smart-chain.svg"} width="200" height="200" />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h3">Farsight</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h5">Names</Typography>
+            </Grid>
+            <Grid item sm={12}>
+              <TextField
+                fullWidth
+                value={name}
+                onChange={(x) => setName(x.target.value)}
+                onKeyDown={handleKeyDown}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SvgIcon fontSize="small" color="action">
+                        <SearchIcon />
+                      </SvgIcon>
+                    </InputAdornment>
+                  ),
+                }}
+                size="medium"
+                placeholder="Search on-chain name"
+                variant="outlined"
+              />
+            </Grid>
+          </Grid>
         </Container>
       </Box>
     </>

@@ -216,7 +216,9 @@ export const RegisterStatusCard = ({ name, duration }) => {
           <Typography variant="caption">Commit to your registration On-Chain</Typography>
         </StepLabel>
         <StepContent>
-          <Typography variant="caption">Accept the transaction in your wallet</Typography>
+          <Typography sx={{ mr: 5 }} variant="caption">
+            Accept the transaction in your wallet
+          </Typography>
           <Button disabled={waitingForTx} onClick={postCommitTransaction} variant="contained">
             Commit
           </Button>

@@ -55,7 +55,7 @@ export const RegisterCard = ({ product, name }) => {
   return (
     <>
       <Grid container spacing={1}>
-        <Grid xs={12}>
+        <Grid item xs={12}>
           <Card>
             <CardContent>
               <Grid container direction={"row"}>
@@ -71,7 +71,7 @@ export const RegisterCard = ({ product, name }) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12}>
+        <Grid item xs={12}>
           <Card>
             <CardContent>
               <Grid container>

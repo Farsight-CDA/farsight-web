@@ -26,9 +26,6 @@ const ChainContent = ({ params }) => {
     }
   }, [params]);
 
-  console.log(chainId);
-  console.log(params.content[0].chainId);
-
   return (
     <Card style={chainId === params.content[0].chainId ? { border: "0.2rem solid red" } : null}>
       <CardContent>
