@@ -31,19 +31,19 @@ export const RegisterCard = ({ product, name }) => {
       body: JSON.stringify({
         name: name,
         expiry: "0x100",
-        duration: "0x100"
+        duration: "0x100",
       }),
       headers: {
-        "Content-Type": "application/json" 
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     const result = await response.json();
     return {
       token: result.token,
-      amount: Number(100n * BigInt(result.amount) / BigInt(Math.pow(10, 6))) / 100
+      amount: Number((100n * BigInt(result.amount)) / BigInt(Math.pow(10, 6))) / 100,
     };
-  }
+  };
 
   const { isConnected, chainId } = useContext(AuthContext);
   const isSupportedChain = isSupported(chainId);
@@ -65,11 +65,7 @@ export const RegisterCard = ({ product, name }) => {
                   </Typography>
                 </Grid>
                 <Grid xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Button
-                    variant="contained"
-                  >
-                    BUY
-                  </Button>
+                  <Button variant="contained">BUY</Button>
                 </Grid>
               </Grid>
             </CardContent>
@@ -132,11 +128,11 @@ export const RegisterCard = ({ product, name }) => {
                     Registration fee
                   </Typography>
                   <Divider />
-{/*                  <Typography color="textPrimary" gutterBottom variant="h5" mt={"0.2rem"}>*/}
-                    {status === 'success' && <p>{priceData.amount} USDC</p>}
-                    {status === 'loading' && <p>Loading...</p>}
-                    {status === 'error' && <p>Error!</p>}
-{/*                  </Typography>*/}
+                  {/*<Typography color="textPrimary" gutterBottom variant="h5" mt={"0.2rem"}>*/}
+                  {status === "success" && <p>{priceData.amount} USDC</p>}
+                  {status === "loading" && <p>Loading...</p>}
+                  {status === "error" && <p>Error!</p>}
+                  {/*</Typography>*/}
                 </Grid>
                 {/* Arrow */}
                 <Grid
@@ -159,8 +155,7 @@ export const RegisterCard = ({ product, name }) => {
                   </Typography>
                   <Divider />
                   <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
-                    Registration: xxx USDC, Bridging: xxx Coin
-                    Total ~YYY USD
+                    Registration: xxx USDC, Bridging: xxx Coin Total ~YYY USD
                   </Typography>
                 </Grid>
               </Grid>
@@ -181,10 +176,11 @@ export const RegisterCard = ({ product, name }) => {
           </Card>
         </Grid>
         <Grid xs={12}>
-          <Card>
-            <Box sx={{ maxWidth: 400 }}>
-              <RegisterStatusCard name={name} duration={ year * 365 * 24 * 60 * 60 }></RegisterStatusCard>
-            </Box>
+          <Card sx={{ p: 3 }}>
+            <RegisterStatusCard
+              name={name}
+              duration={year * 365 * 24 * 60 * 60}
+            ></RegisterStatusCard>
           </Card>
         </Grid>
       </Grid>
