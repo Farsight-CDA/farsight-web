@@ -1,49 +1,179 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../../contexts/auth-context";
 import { mainChainId, isSupported } from "../../utils/chain-ids";
+import { commitment, namehash } from "../../utils/hash";
 import {
-  Avatar,
-  Box,
   Button,
-  Card,
-  CardContent,
-  Divider,
-  IconButton,
-  Paper,
   Step,
   StepContent,
   StepLabel,
   Stepper,
-  Typography,
+  Typography
 } from "@mui/material";
+import LinearProgress from '@mui/material/LinearProgress';
+import { func } from "prop-types";
 
-const totalWaitSeconds = 180;
+const minCommitmentAge = 180;
+const maxCommitmentAge = 1800;
 
-export const RegisterStatusCard = () => {
-  const { isConnected, chainId, controller } = useContext(AuthContext);
+export const RegisterStatusCard = ({ name, duration }) => {
+  //Global State
+  const [_r, setReRender] = useState(false); //Only used to rerender
+  const rerenderRef = useRef();
+  rerenderRef.current = _r;
 
-  const [waitStartTime, setWaitStartTime] = useState(0);
+  const [secret, _s] = useState("0x0000000000000000000000000000000000000000000000000000006d6168616d"); //ToDo: Generate random bytes
 
   const [activeStep, setActiveStep] = useState(0);
+  const [waitingForTx, setWaitingForTx] = useState(false);
+
+  const { isConnected, address, chainId, controller, paymentProvider, paymentToken } = useContext(AuthContext);
+  const isSupportedChain = isSupported(chainId);
+  const commitmentHash = (name != null && address != null)
+    ? commitment(BigInt(namehash(name)), address, duration, secret)
+    : null;
+
+  //Step State
+  const [price, setPrice] = useState(null);
+
+  const [approvedBalance, setApprovedBalance] = useState(false);
+  const isApproved = price != null && approvedBalance >= price;
+  const [balance, setBalance] = useState(false);
+  const hasBalance = price != null && balance >= price;
+
+  const [commitmentTime, setCommitmentTime] = useState(null);
+  const hasCommitment = commitmentTime != null && commitmentTime + maxCommitmentAge > new Date().getTime() / 1000;
+  const waitProgress = Math.min(100, 100 * (new Date().getTime() / 1000 - commitmentTime) / minCommitmentAge);
+  const waitCompleted = commitmentTime != null && commitmentTime + minCommitmentAge < new Date().getTime() / 1000;
 
   useEffect(() => {
-    setActiveStep(
-      !isConnected || !isSupportedChain
-        ? 0
-        : 1
-    );
+    const interval = setInterval(() => {
+      setReRender(!rerenderRef.current);
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    updateSteps();
+  }, [isConnected, chainId, activeStep, approvedBalance, balance, commitmentTime])
+
+  useEffect(() => {
+    loadInitialValues();
   }, [chainId]);
 
-  console.log(activeStep);
+  async function loadInitialValues() {
+    if (!isConnected) {
+      console.log(isConnected);
+      setPrice(null);
+      setApprovedBalance(0);
+      setBalance(0);
+      setCommitmentTime(null);
+      await updateSteps();
+      return;
+    }
 
-  const isSupportedChain = isSupported(chainId);
+    const _approvedBalance = BigInt(await paymentToken.allowance(address, paymentProvider.address));
+    const _balance = BigInt(await paymentToken.balanceOf(address));
+    const _commitmentTime = Number(await controller.getCommitment(commitmentHash));
+    const _price = BigInt(await paymentProvider.getPrice(name, 0, duration));
 
-  function postCommitTransaction() {
-
+    setApprovedBalance(_approvedBalance);
+    setBalance(_balance);
+    setCommitmentTime(_commitmentTime);
+    setPrice(_price);
   }
 
-  function postRegisterTransaction() {
+  async function updateSteps() {
+    var step = 4;
 
+    if (!waitCompleted) {
+      step = 3;
+    }
+    if (!hasCommitment) {
+      step = 2;
+    }
+    if (!isApproved || !hasBalance) {
+      step = 1;
+    }
+    if (!isConnected || !isSupportedChain) {
+      step = 0;
+    }
+
+    if (step != activeStep) {
+      setActiveStep(step);
+    }
+  }
+
+  async function postApproveTransaction() {
+    if (waitingForTx) {
+      return;
+    }
+
+    setWaitingForTx(true);
+
+    try {
+      const receipt = await paymentToken.approve(paymentProvider.address, 100000000000000000000000000000n);
+      const result = await receipt.wait();
+
+      if (result.status != 1) {
+        console.log("There was an error, please try again!");
+        return;
+      }
+
+      setApprovedBalance(100000000000000000000000000000n);
+    }
+    finally {
+      setWaitingForTx(false);
+    }
+  }
+
+  async function postCommitTransaction() {
+    if (waitingForTx) {
+      return;
+    }
+
+    setWaitingForTx(true);
+
+    try {
+      const receipt = await controller.commit(commitmentHash);
+      const result = await receipt.wait();
+
+      if (result.status != 1) {
+        console.log("There was an error, please try again!");
+        return;
+      }
+
+      setCommitmentTime(new Date().getTime() / 1000);
+    }
+    finally {
+      setWaitingForTx(false);
+    }
+  }
+
+  async function postRegisterTransaction() {
+    if (waitingForTx) {
+      return;
+    }
+
+    setWaitingForTx(true);
+
+    try {
+      //ToDo: Handle payment estimation for briding
+      const receipt = await controller.register(name, address, duration, secret);
+      const result = await receipt.wait();
+
+      if (result.status != 1) {
+        console.log("There was an error, please try again!");
+        return;
+      }
+
+      location.reload();
+    }
+    finally {
+      setWaitingForTx(false);
+    }
   }
 
   return (
@@ -62,6 +192,25 @@ export const RegisterStatusCard = () => {
 
       <Step>
         <StepLabel>
+          Approve Farsight for USDC
+        </StepLabel>
+        <StepContent>
+          {!isApproved && <Button
+            disabled={waitingForTx}
+            onClick={postApproveTransaction}
+            variant="contained"
+          >
+            Approve
+          </Button>}
+
+          {!hasBalance && <Typography>
+            Your balance is too low!
+          </Typography>}
+        </StepContent>
+      </Step>
+
+      <Step>
+        <StepLabel>
           <Typography variant="caption">
             Commit to your registration On-Chain
           </Typography>
@@ -71,7 +220,8 @@ export const RegisterStatusCard = () => {
             Accept the transaction in your wallet
           </Typography>
           <Button
-            onClick={ postCommitTransaction }
+            disabled={waitingForTx }
+            onClick={postCommitTransaction}
             variant="contained"
           >
             Commit
@@ -88,6 +238,33 @@ export const RegisterStatusCard = () => {
             This wait time ensures that no matter which chain you are buying the domain from,
             there is always enough time for you to register without being front-run
           </Typography>
+
+          <LinearProgress variant="determinate" value={waitProgress} />
+
+          <Button
+            disabled={!waitCompleted}
+            onClick={() => setActiveStep(3)}
+            variant="contained"
+          >
+            Continue
+          </Button>
+        </StepContent>
+      </Step>
+      <Step>
+        <StepLabel>
+          Complete Registration
+        </StepLabel>
+        <StepContent>
+          <Typography>
+            This step will claim the name NFT to your wallet.
+          </Typography>
+          <Button
+            disabled={waitingForTx}
+            onClick={postRegisterTransaction}
+            variant="contained"
+          >
+            Claim
+          </Button>
         </StepContent>
       </Step>
     </Stepper>

@@ -19,7 +19,7 @@ const Page = () => {
 
   const fetchOccupation = async () => {
     if (isConnected && chainId === mainChainId) {
-      const expiration = await registrar.nameExpires(namehash(name));
+      const expiration = await registrar.getNameExpiration(namehash(name));
       return expiration != 0;
     }
 

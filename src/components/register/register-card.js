@@ -22,15 +22,35 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../../contexts/auth-context";
 import { mainChainId, isSupported } from "../../utils/chain-ids";
 import { RegisterStatusCard } from "./register-status-card";
+import { useQuery } from "react-query";
 
 export const RegisterCard = ({ product, name }) => {
+  const fetchPriceData = async () => {
+    const response = await fetch("/api/getPrice", {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+        expiry: "0x100",
+        duration: "0x100"
+      }),
+      headers: {
+        "Content-Type": "application/json" 
+      }
+    });
+
+    const result = await response.json();
+    return {
+      token: result.token,
+      amount: Number(100n * BigInt(result.amount) / BigInt(Math.pow(10, 6))) / 100
+    };
+  }
+
   const { isConnected, chainId } = useContext(AuthContext);
   const isSupportedChain = isSupported(chainId);
 
-  const [year, setYear] = useState(1);
+  const { data: priceData, status } = useQuery(["price", name, year], fetchPriceData);
 
-  const activeStep = !isConnected || !isSupportedChain ? 0
-                                                       : 1;
+  const [year, setYear] = useState(1);
 
   return (
     <>
@@ -109,12 +129,14 @@ export const RegisterCard = ({ product, name }) => {
                 {/* Registration price to pay */}
                 <Grid item xs={12} sm={5} md={3}>
                   <Typography color="textPrimary" gutterBottom variant="h7">
-                    Registration price to pay
+                    Registration fee
                   </Typography>
                   <Divider />
-                  <Typography color="textPrimary" gutterBottom variant="h5" mt={"0.2rem"}>
-                    {product.REGISTRATIONPRICE}
-                  </Typography>
+{/*                  <Typography color="textPrimary" gutterBottom variant="h5" mt={"0.2rem"}>*/}
+                    {status === 'success' && <p>{priceData.amount} USDC</p>}
+                    {status === 'loading' && <p>Loading...</p>}
+                    {status === 'error' && <p>Error!</p>}
+{/*                  </Typography>*/}
                 </Grid>
                 {/* Arrow */}
                 <Grid
@@ -137,17 +159,8 @@ export const RegisterCard = ({ product, name }) => {
                   </Typography>
                   <Divider />
                   <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
-                    {product.REGISTRATIONPRICE +
-                      "." +
-                      product.PARENT +
-                      " + " +
-                      product.GASFEE +
-                      "." +
-                      product.PARENT +
-                      " = " +
-                      (product.GASFEE + product.REGISTRATIONPRICE) +
-                      "." +
-                      product.PARENT}
+                    Registration: xxx USDC, Bridging: xxx Coin
+                    Total ~YYY USD
                   </Typography>
                 </Grid>
               </Grid>
@@ -170,7 +183,7 @@ export const RegisterCard = ({ product, name }) => {
         <Grid xs={12}>
           <Card>
             <Box sx={{ maxWidth: 400 }}>
-              <RegisterStatusCard></RegisterStatusCard>
+              <RegisterStatusCard name={name} duration={ year * 365 * 24 * 60 * 60 }></RegisterStatusCard>
             </Box>
           </Card>
         </Grid>
