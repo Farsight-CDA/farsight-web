@@ -88,13 +88,15 @@ export const ChainContent = ({ chainState, chainStates }) => {
                       : "here you can edit your chain address"
                   }
                 >
-                  <Button
-                    disabled={chainId !== connectedChainId}
-                    variant="contained"
-                    onClick={setOpen2}
-                  >
-                    Send NFT to
-                  </Button>
+                  <span>
+                    <Button
+                      disabled={chainId !== connectedChainId}
+                      variant="contained"
+                      onClick={setOpen2}
+                    >
+                      Send NFT to
+                    </Button>
+                  </span>
                 </Tooltip>
                 <Modal
                   open={open2}
@@ -123,14 +125,16 @@ export const ChainContent = ({ chainState, chainStates }) => {
                             />
                           ))}
                         </RadioGroup>
-                        <Button
-                          sx={{ mt: 2 }}
-                          disabled={chainId !== connectedChainId}
-                          variant="contained"
-                          onClick={changeToMainChain && handleClose2}
-                        >
-                          Confirm
-                        </Button>
+                        <span>
+                          <Button
+                            sx={{ mt: 2 }}
+                            disabled={chainId !== connectedChainId}
+                            variant="contained"
+                            onClick={changeToMainChain && handleClose2}
+                          >
+                            Confirm
+                          </Button>
+                        </span>
                       </CardContent>
                     </Card>
                   </Box>
@@ -146,13 +150,15 @@ export const ChainContent = ({ chainState, chainStates }) => {
                       : "here you can edit your chain address"
                   }
                 >
-                  <Button
-                    disabled={chainId !== connectedChainId}
-                    variant="contained"
-                    onClick={handleOpen1}
-                  >
-                    edit
-                  </Button>
+                  <span>
+                    <Button
+                      disabled={chainId !== connectedChainId}
+                      variant="contained"
+                      onClick={handleOpen1}
+                    >
+                      edit
+                    </Button>
+                  </span>
                 </Tooltip>
                 <Modal
                   open={open1}
@@ -199,13 +205,15 @@ export const ChainContent = ({ chainState, chainStates }) => {
                               justifyContent: "center",
                             }}
                           >
-                            <Button
-                              disabled={chainId !== connectedChainId}
-                              variant="contained"
-                              onClick={changeLocalOwner && handleClose1}
-                            >
-                              Confirm
-                            </Button>
+                            <span>
+                              <Button
+                                disabled={chainId !== connectedChainId}
+                                variant="contained"
+                                onClick={changeLocalOwner && handleClose1}
+                              >
+                                Confirm
+                              </Button>
+                            </span>
                           </Grid>
                         </Grid>
                       </CardContent>
