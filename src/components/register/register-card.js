@@ -54,7 +54,8 @@ export const RegisterCard = ({ name }) => {
       year * 365 * 24 * 60 * 60
     )).est;
 
-    var gasFee = await axelarClient.estimateGasFee(
+    //Back and forth plus extra
+    var gasFee = 2.5 * await axelarClient.estimateGasFee(
       getEVMChainByChainId(chainId),
       getEVMChainByChainId(mainChainId),
       getNativeAssetByChainId(chainId),
