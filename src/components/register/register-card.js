@@ -32,6 +32,7 @@ export const RegisterCard = ({ name }) => {
   const isSupportedChain = isSupported(chainId);
 
   const [year, setYear] = useState(1);
+  const [buyBool, setBuyBool] = useState(true);
 
   const { data: priceData, status } = useQuery(["price", name, year, chainId], async () => {
     const registerPrice = await fetchPriceData(name, 0, year * 365 * 24 * 60);
@@ -153,27 +154,55 @@ export const RegisterCard = ({ name }) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12}>
-          <Card>
-            <CardContent>
-              <Typography color="textPrimary" gutterBottom variant="h7">
-                * Favorite the name for easy access in case you close out of your browser.
-              </Typography>
-              <Divider />
-              <Typography color="textPrimary" gutterBottom variant="h5">
-                Registering a name requires you to complete 4 steps
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid xs={12}>
-          <Card sx={{ p: 3 }}>
-            <RegisterStatusCard
-              name={name}
-              duration={year * 365 * 24 * 60 * 60}
-            ></RegisterStatusCard>
-          </Card>
-        </Grid>
+        {buyBool ? (
+          <>
+            <Grid xs={12}>
+              <Card>
+                <CardContent>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Typography sx={{ ml: 5 }} color="textPrimary" variant="h5">
+                        This Name is Free you can buy it now
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={6}
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <Button variant="contained" sx={{ mr: 5 }} onClick={() => setBuyBool(false)}>
+                        Buy
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </>
+        ) : (
+          <>
+            <Grid xs={12}>
+              <Card>
+                <CardContent>
+                  <Typography color="textPrimary" gutterBottom variant="h5">
+                    Registering a name requires you to complete 5 steps
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid xs={12}>
+              <Card sx={{ p: 3 }}>
+                <RegisterStatusCard
+                  name={name}
+                  duration={year * 365 * 24 * 60 * 60}
+                ></RegisterStatusCard>
+              </Card>
+            </Grid>
+          </>
+        )}
       </Grid>
     </>
   );
