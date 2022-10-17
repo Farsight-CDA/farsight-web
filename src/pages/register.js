@@ -72,7 +72,6 @@ const Page = () => {
                 fullWidth
                 value={name}
                 onChange={(x) => setName(x.target.value.replace(/[^a-zA-Z0-9]/, ''))}
-                onChange={(x) => setName(x.target.value.replace(/[^a-zA-Z0-9.]/, ""))}
                 onKeyDown={handleKeyDown}
                 InputProps={{
                   startAdornment: (
