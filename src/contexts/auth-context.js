@@ -8,6 +8,7 @@ import IERC20PaymentProviderABI from "../../contracts/abi/IERC20PaymentProvider.
 import IERC20ABI from "../../contracts/abi/IERC20.abi.json";
 
 import { getRegistrarAddress, getControllerAddress } from "../utils/contract-addresses";
+import { isSupported } from "../utils/chain-ids";
 
 export const AuthContext = createContext({
   web3: null,
@@ -128,6 +129,20 @@ export const AuthProvider = (props) => {
       return;
     }
 
+    setProvider(_provider);
+    setAddress(_address);
+    setChainId(_chainId);
+    setSigner(_signer);
+    setWalletType(WalletType.browserEVM);
+
+    if (!isSupported(chainId)) {
+      setRegistrar(null);
+      setController(null);
+      setPaymentProvider(null);
+      setPaymentToken(null);
+      return;
+    }
+
     const iRegistrarABI = new ethers.utils.Interface(IRegistrarABI);
     const iRegistrarControllerABI = new ethers.utils.Interface(IRegistrarControllerABI);
     const iERC20PaymentProviderABI = new ethers.utils.Interface(IERC20PaymentProviderABI);
@@ -151,12 +166,6 @@ export const AuthProvider = (props) => {
     const _paymentTokenAddress = await _paymentProvider.getTokenAddress();
 
     var _paymentToken = new ethers.Contract(_paymentTokenAddress, iERC20ABI, _signer);
-
-    setProvider(_provider);
-    setAddress(_address);
-    setChainId(_chainId);
-    setSigner(_signer);
-    setWalletType(WalletType.browserEVM);
 
     setRegistrar(_registrar);
     setController(_controller);
