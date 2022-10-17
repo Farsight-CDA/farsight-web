@@ -38,7 +38,7 @@ const InnerPage = ({ name }) => {
   return (
     <>
       <Head>
-        <title>Register | Material Kit</title>
+        <title>Register</title>
       </Head>
       <Box
         component="main"
