@@ -52,8 +52,8 @@ export const ChainContent = ({ chainState, chainStates }) => {
       sx={isExpired ? { backgroundColor: "gray" } : null}
       style={
         chainId === connectedChainId
-          ? { border: "0.3rem solid #5048e5" }
-          : { border: "0.1rem solid #5048e5" }
+          ? { outline: "0.3rem solid #5048e5" }
+          : { outline: "0.1rem solid #5048e5" }
       }
     >
       <CardContent>

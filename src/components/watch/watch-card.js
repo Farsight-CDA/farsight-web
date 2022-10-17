@@ -38,11 +38,11 @@ export const WatchCard = ({ name, registration }) => {
           />
         </Grid>
         <Grid xs={12} sx={{ mt: 3 }}>
-          <Card>
+          <Card style={{ marginBottom: "5px" }}>
             <Typography
               sx={{
                 textAlign: "center",
-                m: 3,
+                m: 3
               }}
               variant="h5"
             >
@@ -50,7 +50,7 @@ export const WatchCard = ({ name, registration }) => {
             </Typography>
           </Card>
         </Grid>
-        <Grid xs={12} sx={{ ml: 2, mr: 2 }}>
+        <Grid xs={12} sx={{ ml: 2, mr: 2 }} container spacing={3}>
           {registration.chainStates
             .filter((x) => !x.isKeeper)
             .map((state) => (
