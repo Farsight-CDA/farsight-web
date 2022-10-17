@@ -1,3 +1,7 @@
+import { secondsInWeek } from "date-fns/fp";
+import { EvmChain, GasToken } from "@axelar-network/axelarjs-sdk";
+import { polygonChainId, fantomChainId } from "./chain-ids";
+
 export function getChainNameByChainId(chainId) {
   switch (chainId) {
     case 1: return "Ethereum";
@@ -5,7 +9,7 @@ export function getChainNameByChainId(chainId) {
     case 4: return "Rinkeby Test Network";
     case 5: return "Goerli Test Network";
     case 42: return "Kovan Test Network";
-    case 137: return "Polygon";
+    case polygonChainId: return "Polygon";
     case 80001: return "Mumbai Test Network";
     case 43114: return "Avalanche C-Chain Main Network";
     case 43113: return  "Fuji Test Network";
@@ -15,7 +19,7 @@ export function getChainNameByChainId(chainId) {
     case 1313161555: return "Aurora Test Network";
     case 56: return "Binance Smart Chain";
     case 97: return "Binance Smart Chain Test Network";
-    case 250: return "Fantom Opera Main Network";
+    case fantomChainId: return "Fantom";
     case 4002: return "Fantom Test Network";
   }
 
@@ -24,10 +28,29 @@ export function getChainNameByChainId(chainId) {
 
 export function getLogoNameByChainId(chainId) {
   switch (chainId) {
-    case 137: return "polygon-matic.svg";
+    case polygonChainId: return "polygon-matic.svg";
     case 80001: return "polygon-matic.svg";
     case 56: return "binance-smart-chain.svg";
     case 97: return "binance-smart-chain.svg";
+    case fantomChainId: return "fantom-ftm-logo.svg"
+  }
+
+  return null;
+}
+
+export function getEVMChainByChainId(chainId) {
+  switch (chainId) {
+    case polygonChainId: return EvmChain.POLYGON;
+    case fantomChainId: return EvmChain.FANTOM;
+  }
+
+  return null;
+}
+
+export function getNativeAssetByChainId(chainId) {
+  switch (chainId) {
+    case polygonChainId: return GasToken.MATIC;
+    case fantomChainId: return GasToken.FTM;
   }
 
   return null;

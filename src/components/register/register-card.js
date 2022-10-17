@@ -21,14 +21,17 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { useState, useContext } from "react";
 import { AuthContext } from "../../contexts/auth-context";
-import { isSupported } from "../../utils/chain-ids";
+import { isSupported, mainChainId } from "../../utils/chain-ids";
 import { RegisterStatusCard } from "./register-status-card";
 import { useQuery } from "react-query";
 import { fetchEstimateRegisterGas, fetchPriceData } from "../../utils/HinterEnde";
 import { namehash } from "../../utils/hash";
+import { AxelarContext } from "../../contexts/axelar-context";
+import { getEVMChainByChainId, getNativeAssetByChainId } from "../../utils/ChainTranslation";
 
 export const RegisterCard = ({ name }) => {
   const { isConnected, chainId, address } = useContext(AuthContext);
+  const { axelarClient } = useContext(AxelarContext);
   const isSupportedChain = isSupported(chainId);
 
   const [year, setYear] = useState(1);
@@ -36,15 +39,25 @@ export const RegisterCard = ({ name }) => {
 
   const { data: priceData, status } = useQuery(["price", name, year, chainId], async () => {
     const registerPrice = await fetchPriceData(name, 0, year * 365 * 24 * 60 * 60);
-    const registerGas = await fetchEstimateRegisterGas(
-      chainId,
-      name,
-      namehash(name),
-      address,
-      year * 365 * 24 * 60
+    const registerGas = 1000;
+    //await fetchEstimateRegisterGas(
+    //  chainId,
+    //  name,
+    //  namehash(name),
+    //  address,
+    //  year * 365 * 24 * 60 * 60
+    //);
+
+    //Add Fee To Bridge Back
+
+    const gasFee = await axelarClient.estimateGasFee(
+      getEVMChainByChainId(chainId),
+      getEVMChainByChainId(mainChainId),
+      getNativeAssetByChainId(chainId),
+      registerGas
     );
 
-    return { registerPrice: registerPrice, registerGas: registerGas };
+    return { registerPrice: registerPrice, brigeFee: gasFee };
   });
 
   return (
