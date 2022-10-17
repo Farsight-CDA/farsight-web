@@ -38,7 +38,7 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
   const changeToMainChain = () => {}; //ToDo: machmal
   const setValue = () => {}; //ToDo: machmal
 
-  if (chainState === undefined) {
+  if (chainState === null) {
     return <NoKeeperChainHint></NoKeeperChainHint>;
   }
 
