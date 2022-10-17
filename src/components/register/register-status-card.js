@@ -273,7 +273,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
             <Button
               sx={{ m: 2 }}
               disabled={registerTx == null}
-              onClick={() => window.open("https://axelarscan.io/gmp/" + { registerTx }, "_blank")}
+              onClick={() => window.open("https://axelarscan.io/gmp/" + registerTx, "_blank")}
               variant="contained"
             >
               View on AxelarScan
