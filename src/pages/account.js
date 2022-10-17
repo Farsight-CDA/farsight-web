@@ -28,10 +28,10 @@ const Page = () => {
               <Typography variant="h3">Farsight</Typography>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h5">Accounds</Typography>
+              <Typography variant="h5">Accounts</Typography>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h5">Comming Soon</Typography>
+              <Typography variant="h5">Coming Soon</Typography>
             </Grid>
           </Grid>
         </Container>
