@@ -38,6 +38,8 @@ const Page = () => {
         <title>Register </title>
       </Head>
       <Box
+        style={{
+          'backgroundImage': `url("/static/images/desert-482068432.jpg")` }}
         component="main"
         sx={{
           flexGrow: 1,
