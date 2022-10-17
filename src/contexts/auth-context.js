@@ -38,7 +38,8 @@ export const AuthProvider = (props) => {
   const [secret, setSecret] =
     useState(0x0000000000000000000000000000000000000000000000000000006d6168616d); //ToDo: Generate random bytes
 
-  const isConnected = provider != null;
+  const isConnected = provider != null &&
+      (!isSupported(chainId) || (registrar != null && controller != null && paymentProvider != null && paymentToken != null));
 
   const walletTypeRef = useRef();
   walletTypeRef.current = walletType;
