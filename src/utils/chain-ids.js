@@ -6,8 +6,7 @@ export const bscChainId = 56;
 
 export const isSupported = chainId => {
   return chainId === polygonChainId
-    || chainId === fantomChainId
-    || chainId === bscChainId;
+    || chainId === fantomChainId;
 }
 
 
