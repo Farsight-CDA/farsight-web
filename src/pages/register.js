@@ -27,7 +27,7 @@ const Page = () => {
       return;
     }
 
-    router.push("register/" + name);
+    router.push("register/" + name.toLowerCase());
   };
 
   const basepath = "/static/images/";

@@ -26,7 +26,7 @@ const Page = () => {
           <CircularProgress />
         </Grid>
       ) : (
-        <InnerPage name={name}></InnerPage>
+          <InnerPage name={name.toLowerCase()}></InnerPage>
       )}
     </>
   );
