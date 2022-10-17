@@ -1,4 +1,4 @@
-export const polygonChainId = 80001;
+export const polygonChainId = 137;
 //export const bscChainId = 97;
 
 export const mainChainId = polygonChainId;
