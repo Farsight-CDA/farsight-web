@@ -64,11 +64,11 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
 
   useEffect(() => {
     updateSteps();
-  }, [isConnected, chainId, activeStep, approvedBalance, balance, commitmentTime]);
+  }, [isConnected, chainId, address, activeStep, approvedBalance, balance, commitmentTime]);
 
   useEffect(() => {
     loadInitialValues();
-  }, [chainId]);
+  }, [chainId, address]);
 
   async function loadInitialValues() {
     if (!isConnected || !isSupported(chainId)) {
