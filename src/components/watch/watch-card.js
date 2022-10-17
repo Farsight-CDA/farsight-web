@@ -12,10 +12,14 @@ export const WatchCard = ({ name, registration }) => {
     registration.chainStates[0];
   const { address } = useContext(AuthContext);
 
-  const keeperChain = registration.chainStates.filter((x) => x.isKeeper)[0];
-  const canEdit = keeperChain?.localOwner?.toLowerCase() == address.toLowerCase();
+  const keeperChains = registration.chainStates.filter((x) => x.isKeeper);
+  const keeperChain = keeperChains.length == 1
+    ? keeperChains[0]
+    : null;
 
-  const { chainId: connectedChainId } = useContext(AuthContext);
+  const canEdit = keeperChain !== null && address != null &&
+    keeperChain.localOwner.toLowerCase() == address.toLowerCase();
+
   return (
     <>
       <Typography sx={{ mb: 3, ml: 1 }} variant="h4">

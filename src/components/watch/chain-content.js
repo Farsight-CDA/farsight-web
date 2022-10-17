@@ -231,11 +231,6 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
                   </Box>
                 </Modal>
               </Grid>
-              <Grid item xs={4} style={{ display: "flex", justifyContent: "right" }}>
-                <Button variant="contained" onClick={handleOpensetValue}>
-                  Set Value
-                </Button>
-              </Grid>
             </>
           )}
         </Grid>
