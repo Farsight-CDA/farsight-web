@@ -234,7 +234,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
       <Step>
         <StepLabel>
           <Typography variant="caption">
-            Commit to your registration On-Chain Wait 3 Minutes
+            Wait 3 Minutes
           </Typography>
         </StepLabel>
         <StepContent>
