@@ -59,15 +59,10 @@ export const DashboardSidebar = (props) => {
         }}
       >
         <div>
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ p: 3, padding: "5px" }}>
             <NextLink href="/" passHref>
               <a>
-                <Logo
-                  sx={{
-                    height: 42,
-                    width: 42,
-                  }}
-                />
+                <Logo/>
               </a>
             </NextLink>
           </Box>
@@ -76,6 +71,7 @@ export const DashboardSidebar = (props) => {
           sx={{
             borderColor: "#2D3748",
             my: 3,
+            marginTop: "0px"
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
