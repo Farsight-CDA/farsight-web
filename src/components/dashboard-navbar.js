@@ -40,7 +40,7 @@ export const DashboardNavbar = (props) => {
       return;
     }
 
-    router.push("register/" + name);
+    router.replace("/register/" + name);
   };
 
   return (
