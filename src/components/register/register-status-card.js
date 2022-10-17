@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../../contexts/auth-context";
-import { isSupported, isTestnet } from "../../utils/chain-ids";
+import { isSupported, mainChainId ,isTestnet} from "../../utils/chain-ids";
 import { commitment, namehash } from "../../utils/hash";
 import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -168,8 +168,9 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     setWaitingForTx(true);
 
     try {
-      //ToDo: Handle payment estimation for briding
-      const receipt = await controller.register(name, address, duration, secret, { value: bridgeFee });
+      const receipt = await controller.register(name, address, duration, secret, {
+        value: bridgeFee,
+      });
       const result = await receipt.wait();
 
       if (result.status != 1) {
@@ -181,6 +182,9 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
       ResetSecret();
     } finally {
       setWaitingForTx(false);
+      if (chainId === mainChainId) {
+        location.reload();
+      }
     }
   }
 
@@ -261,14 +265,17 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
           >
             Claim
           </Button>
-          <Button
-            sx={{ mt: 2, mb: 2 }}
-            disabled={registerTx == null}
-            onClick={() => window.open("https://axelarscan.io/gmp/"+{registerTx}, "_blank")}
-            variant="contained"
-          >
-            View on AxelarScan
-          </Button>
+
+          {chainId !== mainChainId && (
+            <Button
+              sx={{ m: 2 }}
+              disabled={registerTx == null}
+              onClick={() => window.open("https://axelarscan.io/gmp/" + { registerTx }, "_blank")}
+              variant="contained"
+            >
+              View on AxelarScan
+            </Button>
+          )}
         </StepContent>
       </Step>
     </Stepper>
