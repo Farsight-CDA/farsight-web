@@ -11,8 +11,15 @@ import * as React from "react";
 
 export const ChainContent = ({ chainState }) => {
   const { chainId: connectedChainId } = useContext(AuthContext);
-  const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
-    chainState;
+  const {
+    chainId,
+    expiration,
+    localOwner,
+    isKeeper,
+    ownerChangeVersion,
+    registrationVersion,
+    registrar,
+  } = chainState;
 
   const isExpired = expiration <= new Date().getTime() / 1000;
   const basepath = "/static/images/chainlogos/";
@@ -21,6 +28,7 @@ export const ChainContent = ({ chainState }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const changeLocalOwner = () => {}; //ToDo: machmal
 
   return (
     <Card
