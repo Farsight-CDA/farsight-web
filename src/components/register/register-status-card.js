@@ -175,8 +175,8 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
         return;
       }
 
+      setRegisterTx(receipt.hash);
       ResetSecret();
-      setRegisterTx(result.tx_hash);
     } finally {
       setWaitingForTx(false);
     }
