@@ -28,11 +28,11 @@ const Page = () => {
       return;
     }
 
-    router.push("register/" + name.toLowerCase());
+    router.push("/register/" + name);
   };
 
   const handleInput = (input) => {
-    input = input.replace(/[^a-zA-Z0-9]/, '');
+    input = input.replace(/[^a-zA-Z0-9]/, '').toLowerCase();
     setName(input);
     setShowError(true);
 

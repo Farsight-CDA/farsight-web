@@ -32,16 +32,31 @@ export const DashboardNavbar = (props) => {
   const [openAccountPopover, setOpenAccountPopover] = useState(false);
 
   const [name, setName] = useState("");
+  const [validName, setValidName] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const router = useRouter();
 
   const handleKeyDown = (e) => {
-    if (e.keyCode !== 13) {
+    if (e.keyCode !== 13 || !validName) {
       return;
     }
 
     router.replace("/register/" + name);
   };
+
+  const handleInput = (input) => {
+    input = input.replace(/[^a-zA-Z0-9]/, '').toLowerCase();
+    setName(input);
+    setShowError(true);
+
+    if (input.length < 4 || input.length > 32) {
+      setValidName(false);
+    }
+    else {
+      setValidName(true);
+    }
+  }
 
   return (
     <>
@@ -78,7 +93,7 @@ export const DashboardNavbar = (props) => {
           <Box sx={{ maxWidth: 500, ml: 2 }}>
             <TextField
               value={name}
-              onChange={(x) => setName(x.target.value.replace(/[^a-zA-Z0-9]/, ''))}
+              onChange={(x) => handleInput(x.target.value)}
               onKeyDown={handleKeyDown}
               InputProps={{
                 startAdornment: (
@@ -92,6 +107,10 @@ export const DashboardNavbar = (props) => {
               placeholder="Search on-chain name"
               variant="standard"
             />
+            {(!validName && showError && name != "") && <Typography style={{ textAlign: "center", color: "red", marginTop: "8px" }}>
+              {name.length < 4 && <>Minimum 4 characters</>}
+              {name.length > 32 && <>At most 32 characters</>}
+            </Typography>}
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           {address !== null ? (

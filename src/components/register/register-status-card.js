@@ -51,7 +51,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     (100 * (new Date().getTime() / 1000 - commitmentTime)) / minCommitmentAge
   );
   const waitCompleted =
-    commitmentTime != null && commitmentTime + minCommitmentAge < new Date().getTime() / 1000;
+    commitmentTime != null && commitmentTime + minCommitmentAge < new Date().getTime() / 1000 && hasCommitment;
 
   useEffect(() => {
     const interval = setInterval(() => {
