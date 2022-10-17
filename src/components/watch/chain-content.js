@@ -45,12 +45,19 @@ export const ChainContent = ({ chainState, chainStates }) => {
 
   return (
     <Card
-      sx={isExpired ? { backgroundColor: "gray" } : { backgroundColor: "lightgray" }}
-      style={chainId === connectedChainId ? { border: "0.2rem solid gray" } : null}
+      sx={isExpired ? { backgroundColor: "gray" } : null}
+      style={
+        chainId === connectedChainId
+          ? { border: "0.3rem solid #5048e5" }
+          : { border: "0.1rem solid #5048e5" }
+      }
     >
       <CardContent>
         <Grid container spacing={0.5}>
-          <Grid xs={3} style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+          <Grid
+            xs={3}
+            style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}
+          >
             <img src={basepath + getLogoNameByChainId(chainId)} width="50" height="50" />
           </Grid>
           <Grid xs={9} style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -63,7 +70,7 @@ export const ChainContent = ({ chainState, chainStates }) => {
             <Grid item xs={12}>
               <Box>
                 <Typography color="textPrimary" gutterBottom variant="h5">
-                  LocalOwner:  {localOwner.slice(0, 7) + "..." + localOwner.slice(21, 28)}
+                  LocalOwner: {localOwner.slice(0, 7) + "..." + localOwner.slice(21, 28)}
                 </Typography>
               </Box>
               <Typography color="textPrimary" gutterBottom variant="h6">
@@ -84,7 +91,7 @@ export const ChainContent = ({ chainState, chainStates }) => {
                       ? "please connect your wallet"
                       : chainId !== connectedChainId
                       ? "you are connected to another chain"
-                      : "here you can edit your chain address"
+                      : "Here you can send your NFT to other Chain"
                   }
                 >
                   <span>
@@ -93,7 +100,7 @@ export const ChainContent = ({ chainState, chainStates }) => {
                       variant="contained"
                       onClick={setOpen2}
                     >
-                      Send NFT to
+                      Send NFT
                     </Button>
                   </span>
                 </Tooltip>
@@ -108,7 +115,7 @@ export const ChainContent = ({ chainState, chainStates }) => {
                     <Card style={{ maxWidth: "4" }}>
                       <CardContent>
                         <Typography color="textPrimary" gutterBottom variant="h6" mb={4}>
-                          Hear you can Change to an other Chain
+                          Here you can send your NFT to other Chain
                         </Typography>
                         <RadioGroup
                           aria-labelledby="demo-radio-buttons-group-label"
