@@ -23,6 +23,16 @@ import LockIcon from "@mui/icons-material/Lock";
 export const ChainContent = ({ chainState, chainStates }) => {
   const { chainId: connectedChainId } = useContext(AuthContext);
 
+  //modal
+  const [open1, setOpen1] = useState(false);
+  const handleOpen1 = () => setOpen1(true);
+  const handleClose1 = () => setOpen1(false);
+  const [open2, setOpen2] = useState(false);
+  const handleOpen2 = () => setOpen2(true);
+  const handleClose2 = () => setOpen2(false);
+  const changeLocalOwner = () => { }; //ToDo: machmal
+  const changeToMainChain = () => { }; //ToDo: machmal
+
   if (chainState === undefined) {
     return (<NoKeeperChainHint></NoKeeperChainHint>);
   } 
@@ -32,16 +42,6 @@ export const ChainContent = ({ chainState, chainStates }) => {
 
   const isExpired = expiration <= new Date().getTime() / 1000;
   const basepath = "/static/images/chainlogos/";
-
-  //modal
-  const [open1, setOpen1] = useState(false);
-  const handleOpen1 = () => setOpen1(true);
-  const handleClose1 = () => setOpen1(false);
-  const [open2, setOpen2] = useState(false);
-  const handleOpen2 = () => setOpen2(true);
-  const handleClose2 = () => setOpen2(false);
-  const changeLocalOwner = () => {}; //ToDo: machmal
-  const changeToMainChain = () => {}; //ToDo: machmal
 
   return (
     <Card
