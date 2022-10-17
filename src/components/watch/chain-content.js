@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { getChainNameByChainId, getLogoNameByChainId } from "../../utils/ChainTranslation";
 import { AuthContext } from "../../contexts/auth-context";
 import Box from "@mui/material/Box";
@@ -40,12 +40,12 @@ export const ChainContent = ({ chainState, chainStates }) => {
 
   return (
     <Card
-      sx={isExpired ? { backgroundColor: "lightgray" } : { backgroundColor: "" }}
+      sx={isExpired ? { backgroundColor: "gray" } : { backgroundColor: "lightgray" }}
       style={chainId === connectedChainId ? { border: "0.2rem solid gray" } : null}
     >
       <CardContent>
         <Grid container spacing={0.5}>
-          <Grid xs={3}>
+          <Grid xs={3} style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
             <img src={basepath + getLogoNameByChainId(chainId)} width="50" height="50" />
           </Grid>
           <Grid xs={9} style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -56,15 +56,9 @@ export const ChainContent = ({ chainState, chainStates }) => {
           <Grid xs={12} />
           {!isExpired && (
             <Grid item xs={12}>
-              <Typography color="textPrimary" gutterBottom variant="h5">
-                Keeper Chain: {isKeeper.toString()}
-              </Typography>
               <Box>
                 <Typography color="textPrimary" gutterBottom variant="h5">
-                  LocalOwner:
-                </Typography>
-                <Typography color="textPrimary" gutterBottom variant="h5">
-                  {localOwner.slice(0, 7) + "..." + localOwner.slice(21, 28)}
+                  LocalOwner:  {localOwner.slice(0, 7) + "..." + localOwner.slice(21, 28)}
                 </Typography>
               </Box>
               <Typography color="textPrimary" gutterBottom variant="h6">
