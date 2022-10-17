@@ -19,9 +19,10 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { NoKeeperChainHint } from "./no-keeper-chain";
 import LockIcon from "@mui/icons-material/Lock";
+import { mainChainId } from "../../utils/chain-ids";
 
-export const ChainContent = ({ chainState, chainStates }) => {
-  const { chainId: connectedChainId } = useContext(AuthContext);
+export const ChainContent = ({ chainState, chainStates, owner }) => {
+  const { chainId: connectedChainId, address } = useContext(AuthContext);
 
   //modal
   const [open1, setOpen1] = useState(false);
@@ -85,33 +86,28 @@ export const ChainContent = ({ chainState, chainStates }) => {
               </Typography>
             </Grid>
           )}
-          {isExpired && (
-            <Grid item xs={6} style={{ display: "flex", justifyContent: "left" }}>
-              <LockIcon fontSize={"large"} sx={{ ml: 1 }} />
-            </Grid>
-          )}
           {!isExpired && (
             <>
-              <Grid xs={4} sm={4} md={4} style={{ display: "flex", justifyContent: "flex-start" }}>
-                <Tooltip
+              <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-start" }}>
+                {canEdit &&<Tooltip
                   title={
                     connectedChainId === null
                       ? "please connect your wallet"
                       : chainId !== connectedChainId
                       ? "you are connected to another chain"
-                      : "Here you can send your NFT to other Chain"
+                      : "Here you can send your NFT to another supported Chain"
                   }
                 >
-                  <span>
+                   <span>
                     <Button
                       disabled={chainId !== connectedChainId}
                       variant="contained"
                       onClick={setOpen2}
                     >
-                      Send NFT
+                      Cross Chain Transfer
                     </Button>
                   </span>
-                </Tooltip>
+                </Tooltip>}
                 <Modal
                   open={open2}
                   onClose={handleClose2}
@@ -139,7 +135,7 @@ export const ChainContent = ({ chainState, chainStates }) => {
                             />
                           ))}
                         </RadioGroup>
-                        <span>
+                        {canEdit && <span>
                           <Button
                             sx={{ mt: 2 }}
                             disabled={chainId !== connectedChainId}
@@ -148,32 +144,32 @@ export const ChainContent = ({ chainState, chainStates }) => {
                           >
                             Confirm
                           </Button>
-                        </span>
+                        </span>}
                       </CardContent>
                     </Card>
                   </Box>
                 </Modal>
               </Grid>
-              <Grid xs={4} sm={4} md={4} style={{ display: "flex", justifyContent: "flex-end" }}>
-                <Tooltip
+              <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+                {canEdit &&<Tooltip
                   title={
                     connectedChainId === null
                       ? "please connect your wallet"
                       : chainId !== connectedChainId
                       ? "you are connected to another chain"
-                      : "here you can edit your chain address"
+                      : "here you can invalidate previous owners records on all chains"
                   }
                 >
-                  <span>
+                   <span>
                     <Button
                       disabled={chainId !== connectedChainId}
                       variant="contained"
                       onClick={handleOpen1}
                     >
-                      edit
+                      Increment Owner Version
                     </Button>
                   </span>
-                </Tooltip>
+                </Tooltip>}
                 <Modal
                   open={open1}
                   onClose={handleClose1}
@@ -219,7 +215,7 @@ export const ChainContent = ({ chainState, chainStates }) => {
                               justifyContent: "center",
                             }}
                           >
-                            <span>
+                            {canEdit && <span>
                               <Button
                                 disabled={chainId !== connectedChainId}
                                 variant="contained"
@@ -227,7 +223,7 @@ export const ChainContent = ({ chainState, chainStates }) => {
                               >
                                 Confirm
                               </Button>
-                            </span>
+                            </span>}
                           </Grid>
                         </Grid>
                       </CardContent>
@@ -243,6 +239,30 @@ export const ChainContent = ({ chainState, chainStates }) => {
             </>
           )}
         </Grid>
+        {isExpired && <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
+          <LockIcon fontSize={"large"} sx={{ ml: 1 }} />
+          <p>Uninitialized or Expired</p>
+          {canEdit && <Tooltip
+            title={
+              connectedChainId === null
+                ? "Please connect your wallet"
+                : mainChainId !== connectedChainId
+                  ? "You need to connect to your NFT chain"
+                  : "Here you can set records cross chain"
+            }
+          >
+            <span>
+              <Button
+                disabled={mainChainId !== connectedChainId}
+                variant="contained"
+                onClick={handleOpen1}
+              >
+                Set Record
+              </Button>
+            </span>
+          </Tooltip>}
+        </div>}
+
       </CardContent>
     </Card>
   );

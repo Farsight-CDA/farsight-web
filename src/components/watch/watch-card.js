@@ -11,6 +11,8 @@ export const WatchCard = ({ name, registration }) => {
   const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
     registration.chainStates[0];
 
+  const keeperChain = registration.chainStates.filter((x) => x.isKeeper)[0];
+
   const { chainId: connectedChainId } = useContext(AuthContext);
   return (
     <>
@@ -34,7 +36,8 @@ export const WatchCard = ({ name, registration }) => {
         <Grid xs={12} sx={{ ml: 2, mr: 2 }}>
           <ChainContent
             chainStates={registration.chainStates}
-            chainState={registration.chainStates.filter((x) => x.isKeeper)[0]}
+            chainState={keeperChain}
+            owner={keeperChain?.localOwner}
           />
         </Grid>
         <Grid xs={12} sx={{ mt: 3 }}>
@@ -55,7 +58,7 @@ export const WatchCard = ({ name, registration }) => {
             .filter((x) => !x.isKeeper)
             .map((state) => (
               <Grid key={state.chainId} xs={6}>
-                <ChainContent chainStates={registration.chainStates} chainState={state} />
+                <ChainContent chainStates={registration.chainStates} chainState={state} owner={keeperChain?.localOwner} />
               </Grid>
             ))}
         </Grid>
