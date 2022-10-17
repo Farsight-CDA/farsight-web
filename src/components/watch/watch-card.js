@@ -28,7 +28,7 @@ export const WatchCard = ({ name, registration }) => {
         </Card>
         <Card sx={{ width: "100%", margin: "40px", backgroundColor: "#D2D3D4" }}>
           <Typography sx={{ mb: 3, ml: 1, textAlign: "center", padding: "25px", borderBottom: "3px solid black", margin: "0" }} variant="h5">
-            Connected Chains
+            Other Supported Chains
           </Typography>
           {registration.chainStates.filter(x => !x.isKeeper).map((state) => (
             <Grid key={state.chainId} xs={6}>
