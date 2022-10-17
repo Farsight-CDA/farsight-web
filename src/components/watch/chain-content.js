@@ -5,7 +5,6 @@ import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { useContext, useEffect, useState } from "react";
 import { getChainNameByChainId, getLogoNameByChainId } from "../../utils/ChainTranslation";
 import { AuthContext } from "../../contexts/auth-context";
-import BasicModal from "../modal/modal";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import * as React from "react";
@@ -16,7 +15,6 @@ export const ChainContent = ({ chainState }) => {
   console.log(chainState);
 
   //const { chain_id, expiration, localOwner, registrationVersion, ownerChangeVersion } = chainState;
-
 
   const isExpired = expiration <= new Date().getTime() / 1000;
   const basepath = "/static/images/chainlogos/";
@@ -30,7 +28,6 @@ export const ChainContent = ({ chainState }) => {
     <Card style={chainId === connectedChainId ? { border: "0.2rem solid red" } : null}>
       <CardContent>
         <Grid container spacing={0.5}>
-
           <Grid xs={3}>
             <img src={basepath + getLogoNameByChainId(chainId)} width="50" height="50" />
           </Grid>
@@ -53,8 +50,8 @@ export const ChainContent = ({ chainState }) => {
                 connectedChainId === null
                   ? "please connect your wallet"
                   : chainId != connectedChainId
-                    ? "you are connected to another chain"
-                    : "here you can edit your chain address"
+                  ? "you are connected to another chain"
+                  : "here you can edit your chain address"
               }
             >
               <span>
@@ -85,7 +82,6 @@ export const ChainContent = ({ chainState }) => {
               </span>
             </Tooltip>
           </Grid>
-
         </Grid>
       </CardContent>
     </Card>
