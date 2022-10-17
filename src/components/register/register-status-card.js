@@ -1,11 +1,11 @@
 import { useState, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../../contexts/auth-context";
-import { isSupported } from "../../utils/chain-ids";
+import { isSupported, isTestnet } from "../../utils/chain-ids";
 import { commitment, namehash } from "../../utils/hash";
 import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 
-const minCommitmentAge = 30;
+const minCommitmentAge = isTestnet ? 30 : 180;
 const maxCommitmentAge = 3600;
 
 export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
