@@ -19,7 +19,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/auth-context";
 import { isSupported, mainChainId } from "../../utils/chain-ids";
 import { RegisterStatusCard } from "./register-status-card";
@@ -28,6 +28,7 @@ import { fetchEstimateRegisterGas, fetchPriceData } from "../../utils/HinterEnde
 import { namehash } from "../../utils/hash";
 import { AxelarContext } from "../../contexts/axelar-context";
 import { getEVMChainByChainId, getNativeAssetByChainId } from "../../utils/ChainTranslation";
+import { ethers } from "../../../node_modules/ethers/lib/index";
 
 export const RegisterCard = ({ name }) => {
   const { isConnected, chainId, address } = useContext(AuthContext);
@@ -57,8 +58,12 @@ export const RegisterCard = ({ name }) => {
       registerGas
     );
 
-    return { registerPrice: registerPrice, brigeFee: gasFee };
+    return { registerPrice: registerPrice, bridgeFee: gasFee };
   });
+
+  useEffect(() => {
+    setBuyBool(false);
+  }, [chainId]);
 
   return (
     <>
@@ -162,9 +167,14 @@ export const RegisterCard = ({ name }) => {
                     The price depending on the chain.
                   </Typography>
                   <Divider />
-                  <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
-                    Registration: xxx USDC, Bridging: xxx Coin Total ~YYY USD
-                  </Typography>
+                  {status == 'success' && <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
+
+                    Registration: {priceData.registerPrice.amount} USDC, Bridging: {ethers.utils.parseEther(priceData.bridgeFee).toString()} Coin 
+                  </Typography>}
+                  {status === 'error' || status === 'loading' && <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
+
+                    Registration: loading..., Bridging: loading...
+                  </Typography>}
                 </Grid>
               </Grid>
             </CardContent>
@@ -178,7 +188,7 @@ export const RegisterCard = ({ name }) => {
                   <Grid container>
                     <Grid item xs={6}>
                       <Typography sx={{ ml: 5 }} color="textPrimary" variant="h5">
-                        This Name is Free you can buy it now
+                        This Name is available you can buy it now
                       </Typography>
                     </Grid>
                     <Grid
@@ -212,8 +222,9 @@ export const RegisterCard = ({ name }) => {
             <Grid xs={12}>
               <Card sx={{ p: 3 }}>
                 <RegisterStatusCard
-                  name={name}
-                  duration={year * 365 * 24 * 60 * 60}
+                    name={name}
+                    duration={year * 365 * 24 * 60 * 60}
+                    bridgeFee={ priceData?.bridgeFee }
                 ></RegisterStatusCard>
               </Card>
             </Grid>

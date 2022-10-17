@@ -8,7 +8,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 const minCommitmentAge = 180;
 const maxCommitmentAge = 3600;
 
-export const RegisterStatusCard = ({ name, duration }) => {
+export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
   //Global State
   const [_r, setReRender] = useState(false); //Only used to rerender
   const rerenderRef = useRef();

@@ -135,7 +135,7 @@ export const AuthProvider = (props) => {
     setSigner(_signer);
     setWalletType(WalletType.browserEVM);
 
-    if (!isSupported(chainId)) {
+    if (!isSupported(_chainId)) {
       setRegistrar(null);
       setController(null);
       setPaymentProvider(null);
