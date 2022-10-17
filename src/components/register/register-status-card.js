@@ -9,15 +9,6 @@ const minCommitmentAge = 30;
 const maxCommitmentAge = 3600;
 
 export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
-  //Global State
-  const [_r, setReRender] = useState(false); //Only used to rerender
-  const rerenderRef = useRef();
-  rerenderRef.current = _r;
-
-  const [activeStep, setActiveStep] = useState(0);
-  const [waitingForTx, setWaitingForTx] = useState(false);
-  const [registerTx, setRegisterTx] = useState(null);
-
   const {
     isConnected,
     address,
@@ -28,6 +19,16 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     secret,
     ResetSecret,
   } = useContext(AuthContext);
+
+  //Global State
+  const [_r, setReRender] = useState(false); //Only used to rerender
+  const rerenderRef = useRef();
+  rerenderRef.current = _r;
+
+  const [activeStep, setActiveStep] = useState(0);
+  const [waitingForTx, setWaitingForTx] = useState(false);
+  const [registerTx, setRegisterTx] = useState(null);
+
   const isSupportedChain = isSupported(chainId);
   const commitmentHash =
     name != null && address != null
@@ -88,6 +89,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     setBalance(_balance);
     setCommitmentTime(_commitmentTime);
     setPrice(_price);
+    await updateSteps();
   }
 
   async function updateSteps() {

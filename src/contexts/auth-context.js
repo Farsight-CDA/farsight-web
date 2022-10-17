@@ -86,18 +86,6 @@ export const AuthProvider = (props) => {
       }
 
       initWallet(accounts);
-
-      if (!eventsRegistered) {
-        const { provider: ethereum } = prov;
-        ethereum.on("accountsChanged", () => {
-          handleAccountChanged(WalletType.browserEVM);
-        });
-        ethereum.on("chainChanged", () => {
-          handleChainIdChanged(WalletType.browserEVM);
-        });
-
-        setEventsRegistered(true);
-      }
     });
   }
   function ResetSecret() {
@@ -113,10 +101,23 @@ export const AuthProvider = (props) => {
     if (window.ethereum === undefined) {
       return;
     }
+
     const _provider = new ethers.providers.Web3Provider(window.ethereum);
 
+    if (!eventsRegistered) {
+      const { provider: ethereum } = _provider;
+      ethereum.on("accountsChanged", () => {
+        handleAccountChanged(WalletType.browserEVM);
+      });
+      ethereum.on("chainChanged", () => {
+        handleChainIdChanged(WalletType.browserEVM);
+      });
+
+      setEventsRegistered(true);
+    }
+
     const addresses = await _provider.listAccounts();
-    if (addresses.length === 0) {
+    if (addresses.length == 0) {
       return;
     }
 
@@ -173,20 +174,20 @@ export const AuthProvider = (props) => {
     setPaymentToken(_paymentToken);
   }
 
-  async function handleAccountChanged(wallet) {
+  function handleAccountChanged(wallet) {
     if (wallet != walletTypeRef.current) {
       return;
     }
 
-    await initWallet();
+    initWallet();
   }
 
-  async function handleChainIdChanged(wallet) {
+  function handleChainIdChanged(wallet) {
     if (wallet != walletTypeRef.current) {
       return;
     }
 
-    await initWallet([address]);
+    initWallet([address]);
   }
 
   return (
