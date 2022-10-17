@@ -46,7 +46,7 @@ const Page = () => {
           py: 8,
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Grid
             container
             spacing={1}
@@ -55,6 +55,10 @@ const Page = () => {
             justifyContent="center"
             style={{
               minHeight: "30vh",
+              backgroundColor: "darkgray",
+              padding: "50px",
+              borderRadius: "25px",
+              width: "auto"
             }}
           >
             <Grid item xs={12}>
@@ -63,7 +67,7 @@ const Page = () => {
             <Grid item xs={12}>
               <Typography variant="h3">Farsight</Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{marginBottom: "10px"}}>
               <Typography variant="h5">Names</Typography>
             </Grid>
             <Grid item sm={12}>
