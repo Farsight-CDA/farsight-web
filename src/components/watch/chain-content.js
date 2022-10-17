@@ -30,12 +30,16 @@ export const ChainContent = ({ chainState, chainStates }) => {
   const [open2, setOpen2] = useState(false);
   const handleOpen2 = () => setOpen2(true);
   const handleClose2 = () => setOpen2(false);
-  const changeLocalOwner = () => { }; //ToDo: machmal
-  const changeToMainChain = () => { }; //ToDo: machmal
+  const [openSetValue, setOpensetValue] = useState(false);
+  const handleOpensetValue = () => setOpensetValue(true);
+  const handleClosesetValue = () => setOpensetValue(false);
+  const changeLocalOwner = () => {}; //ToDo: machmal
+  const changeToMainChain = () => {}; //ToDo: machmal
+  const setValue = () => {}; //ToDo: machmal
 
   if (chainState === undefined) {
-    return (<NoKeeperChainHint></NoKeeperChainHint>);
-  } 
+    return <NoKeeperChainHint></NoKeeperChainHint>;
+  }
 
   const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
     chainState;
@@ -81,10 +85,14 @@ export const ChainContent = ({ chainState, chainStates }) => {
               </Typography>
             </Grid>
           )}
-          {isExpired && <LockIcon fontSize={"large"} sx={{ ml: 1 }} />}
+          {isExpired && (
+            <Grid item xs={6} style={{ display: "flex", justifyContent: "left" }}>
+              <LockIcon fontSize={"large"} sx={{ ml: 1 }} />
+            </Grid>
+          )}
           {!isExpired && (
             <>
-              <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-start" }}>
+              <Grid xs={4} sm={4} md={4} style={{ display: "flex", justifyContent: "flex-start" }}>
                 <Tooltip
                   title={
                     connectedChainId === null
@@ -146,7 +154,7 @@ export const ChainContent = ({ chainState, chainStates }) => {
                   </Box>
                 </Modal>
               </Grid>
-              <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Grid xs={4} sm={4} md={4} style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Tooltip
                   title={
                     connectedChainId === null
@@ -226,6 +234,11 @@ export const ChainContent = ({ chainState, chainStates }) => {
                     </Card>
                   </Box>
                 </Modal>
+              </Grid>
+              <Grid item xs={4} style={{ display: "flex", justifyContent: "right" }}>
+                <Button variant="contained" onClick={handleOpensetValue}>
+                  Set Value
+                </Button>
               </Grid>
             </>
           )}

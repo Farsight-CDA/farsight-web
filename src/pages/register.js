@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 import {
   Box,
   Container,
-  Card,
-  CardContent,
   TextField,
   InputAdornment,
   SvgIcon,
@@ -14,7 +12,6 @@ import {
 } from "@mui/material";
 import { Search as SearchIcon } from "../icons/search";
 import { DashboardLayout } from "../components/dashboard-layout";
-import { chainIdToSvg } from "../utils/ChainTranslation";
 import * as React from "react";
 
 const Page = () => {
@@ -75,6 +72,7 @@ const Page = () => {
                 fullWidth
                 value={name}
                 onChange={(x) => setName(x.target.value.replace(/[^a-zA-Z0-9]/, ''))}
+                onChange={(x) => setName(x.target.value.replace(/[^a-zA-Z0-9.]/, ""))}
                 onKeyDown={handleKeyDown}
                 InputProps={{
                   startAdornment: (
