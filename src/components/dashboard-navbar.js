@@ -78,7 +78,7 @@ export const DashboardNavbar = (props) => {
           <Box sx={{ maxWidth: 500, ml: 2 }}>
             <TextField
               value={name}
-              onChange={(x) => setName(x.target.value)}
+              onChange={(x) => setName(x.target.value.replace(/[^a-zA-Z0-9]/, ''))}
               onKeyDown={handleKeyDown}
               InputProps={{
                 startAdornment: (
