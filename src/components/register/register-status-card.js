@@ -178,13 +178,16 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
         return;
       }
 
-      setRegisterTx(receipt.hash);
       ResetSecret();
-    } finally {
-      setWaitingForTx(false);
+
       if (chainId === mainChainId) {
         location.reload();
+        return;
       }
+
+      setRegisterTx(receipt.hash);
+    } finally {
+      setWaitingForTx(false);
     }
   }
 
