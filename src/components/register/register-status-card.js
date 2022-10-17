@@ -16,6 +16,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [waitingForTx, setWaitingForTx] = useState(false);
+  const [registerTx, setRegisterTx] = useState(null);
 
   const {
     isConnected,
@@ -166,15 +167,16 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
 
     try {
       //ToDo: Handle payment estimation for briding
-      const receipt = await controller.register(name, address, duration, secret);
+      const receipt = await controller.register(name, address, duration, secret, { value: bridgeFee });
       const result = await receipt.wait();
 
       if (result.status != 1) {
         alert("There was an error, please try again!");
         return;
       }
+
       ResetSecret();
-      location.reload();
+      setRegisterTx(result.tx_hash);
     } finally {
       setWaitingForTx(false);
     }
@@ -251,11 +253,19 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
           <Typography>This step will claim the name NFT to your wallet.</Typography>
           <Button
             sx={{ mt: 2, mb: 2 }}
-            disabled={waitingForTx}
+            disabled={waitingForTx || registerTx != null}
             onClick={postRegisterTransaction}
             variant="contained"
           >
             Claim
+          </Button>
+          <Button
+            sx={{ mt: 2, mb: 2 }}
+            disabled={registerTx == null}
+            onClick={() => window.open("https://axelarscan.io/gmp/"+{registerTx}, "_blank")}
+            variant="contained"
+          >
+            View on AxelarScan
           </Button>
         </StepContent>
       </Step>
