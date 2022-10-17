@@ -31,38 +31,41 @@ import { getEVMChainByChainId, getNativeAssetByChainId } from "../../utils/Chain
 import { ethers } from "../../../node_modules/ethers/lib/index";
 
 export const RegisterCard = ({ name }) => {
-  const { isConnected, chainId, address } = useContext(AuthContext);
+  const { chainId, address } = useContext(AuthContext);
   const { axelarClient } = useContext(AxelarContext);
-  const isSupportedChain = isSupported(chainId);
 
   const [year, setYear] = useState(1);
   const [buyBool, setBuyBool] = useState(true);
 
-  const { data: priceData, status } = useQuery(["price", name, year, chainId], async () => {
-    const registerPrice = await fetchPriceData(name, 0, year * 365 * 24 * 60 * 60);
-    const registerGas = 1000;
-    //await fetchEstimateRegisterGas(
-    //  chainId,
-    //  name,
-    //  namehash(name),
-    //  address,
-    //  year * 365 * 24 * 60 * 60
-    //);
+  const { data: registerFee, status: registerFeeStatus } = useQuery(["price", name, year, chainId], async () => {
+    return (await fetchPriceData(name, 0, year * 365 * 24 * 60 * 60)).amount;
+  });
 
-    //Add Fee To Bridge Back
+  const { data: gasFee, status: gasFeeStatus } = useQuery(["gasFee", chainId], async () => {
+    if (!isSupported(chainId) || chainId == mainChainId) {
+      return 0;
+    }
 
-    const gasFee = await axelarClient.estimateGasFee(
+    const registerGas = (await fetchEstimateRegisterGas(
+      chainId,
+      name,
+      namehash(name),
+      address,
+      year * 365 * 24 * 60 * 60
+    )).est;
+
+    var gasFee = await axelarClient.estimateGasFee(
       getEVMChainByChainId(chainId),
       getEVMChainByChainId(mainChainId),
       getNativeAssetByChainId(chainId),
       registerGas
     );
 
-    return { registerPrice: registerPrice, bridgeFee: gasFee };
+    return gasFee;
   });
 
   useEffect(() => {
-    setBuyBool(false);
+    setBuyBool(true);
   }, [chainId]);
 
   return (
@@ -141,11 +144,11 @@ export const RegisterCard = ({ name }) => {
                     Registration fee
                   </Typography>
                   <Divider />
-                  {/*<Typography color="textPrimary" gutterBottom variant="h5" mt={"0.2rem"}>*/}
-                  {status === "success" && <p>{priceData.registerPrice.amount} USDC</p>}
-                  {status === "loading" && <p>Loading...</p>}
-                  {status === "error" && <p>Error!</p>}
-                  {/*</Typography>*/}
+                  <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
+                    {registerFeeStatus === "success" && <p>{registerFee} USDC</p>}
+                    {registerFeeStatus === "loading" && <p>Loading...</p>}
+                    {registerFeeStatus === "error" && <p>Error!</p>}
+                  </Typography>
                 </Grid>
                 {/* Arrow */}
                 <Grid
@@ -167,13 +170,12 @@ export const RegisterCard = ({ name }) => {
                     The price depending on the chain.
                   </Typography>
                   <Divider />
-                  {status == 'success' && <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
-
-                    Registration: {priceData.registerPrice.amount} USDC, Bridging: {ethers.utils.parseEther(priceData.bridgeFee).toString()} Coin 
+                  {gasFeeStatus == 'success' && <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
+                    {gasFee == 0 && <>Bridging not necessary.</> }
+                    {gasFee != 0 && <>Bridging: {Math.round(10000 * gasFee / Math.pow(10, 18)) / 10000} {getNativeAssetByChainId(chainId)}</>}
                   </Typography>}
-                  {status === 'error' || status === 'loading' && <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
-
-                    Registration: loading..., Bridging: loading...
+                  {gasFeeStatus === 'error' || gasFeeStatus === 'loading' && <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
+                    Bridging: loading...
                   </Typography>}
                 </Grid>
               </Grid>
@@ -222,9 +224,9 @@ export const RegisterCard = ({ name }) => {
             <Grid xs={12}>
               <Card sx={{ p: 3 }}>
                 <RegisterStatusCard
-                    name={name}
-                    duration={year * 365 * 24 * 60 * 60}
-                    bridgeFee={ priceData?.bridgeFee }
+                  name={name}
+                  duration={year * 365 * 24 * 60 * 60}
+                  bridgeFee={gasFee}
                 ></RegisterStatusCard>
               </Card>
             </Grid>

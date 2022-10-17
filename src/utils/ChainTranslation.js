@@ -42,7 +42,7 @@ export function getEVMChainByChainId(chainId) {
   switch (chainId) {
     case polygonChainId: return EvmChain.POLYGON;
     case fantomChainId: return EvmChain.FANTOM;
-    case bscChainId: return EvmChain.BSC;
+    case bscChainId: return EvmChain.BINANCE;
   }
 
   return null;
@@ -52,7 +52,7 @@ export function getNativeAssetByChainId(chainId) {
   switch (chainId) {
     case polygonChainId: return GasToken.MATIC;
     case fantomChainId: return GasToken.FTM;
-    case bscChainId: return GasToken.BNB;
+    case bscChainId: return GasToken.BINANCE;
   }
 
   return null;

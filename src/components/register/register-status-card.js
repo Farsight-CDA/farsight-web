@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../../contexts/auth-context";
-import { mainChainId, isSupported } from "../../utils/chain-ids";
+import { isSupported } from "../../utils/chain-ids";
 import { commitment, namehash } from "../../utils/hash";
 import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -69,7 +69,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
   }, [chainId]);
 
   async function loadInitialValues() {
-    if (!isConnected) {
+    if (!isConnected || !isSupported(chainId)) {
       setPrice(null);
       setApprovedBalance(0);
       setBalance(0);
