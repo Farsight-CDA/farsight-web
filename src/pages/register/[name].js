@@ -52,8 +52,7 @@ const InnerPage = ({ name }) => {
           <Typography sx={{ mb: 3 }} variant="h4">
             Register
           </Typography>
-          {
-            //status === "loading" &&
+          {status === "loading" && (
             <Grid
               container
               spacing={1}
@@ -64,7 +63,7 @@ const InnerPage = ({ name }) => {
             >
               <CircularProgress />
             </Grid>
-          }
+          )}
           {status === "error" && (
             <Grid
               container
