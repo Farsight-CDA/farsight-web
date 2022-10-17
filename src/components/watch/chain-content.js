@@ -21,7 +21,7 @@ import { NoKeeperChainHint } from "./no-keeper-chain";
 import LockIcon from "@mui/icons-material/Lock";
 import { mainChainId } from "../../utils/chain-ids";
 
-export const ChainContent = ({ chainState, chainStates, owner }) => {
+export const ChainContent = ({ chainState, chainStates, canEdit }) => {
   const { chainId: connectedChainId, address } = useContext(AuthContext);
 
   //modal

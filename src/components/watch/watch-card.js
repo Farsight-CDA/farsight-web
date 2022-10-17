@@ -10,14 +10,16 @@ import { AuthContext } from "../../contexts/auth-context";
 export const WatchCard = ({ name, registration }) => {
   const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
     registration.chainStates[0];
+  const { address } = useContext(AuthContext);
 
   const keeperChain = registration.chainStates.filter((x) => x.isKeeper)[0];
+  const canEdit = keeperChain?.localOwner?.toLowerCase() == address.toLowerCase();
 
   const { chainId: connectedChainId } = useContext(AuthContext);
   return (
     <>
       <Typography sx={{ mb: 3, ml: 1 }} variant="h4">
-        {name}.far
+        {name}.far {canEdit && <>(Yours)</>}
       </Typography>
       <Grid container spacing={1}>
         <Grid xs={12}>
@@ -38,6 +40,7 @@ export const WatchCard = ({ name, registration }) => {
             chainStates={registration.chainStates}
             chainState={keeperChain}
             owner={keeperChain?.localOwner}
+            canEdit={canEdit}
           />
         </Grid>
         <Grid xs={12} sx={{ mt: 3 }}>
@@ -58,7 +61,7 @@ export const WatchCard = ({ name, registration }) => {
             .filter((x) => !x.isKeeper)
             .map((state) => (
               <Grid key={state.chainId} xs={6}>
-                <ChainContent chainStates={registration.chainStates} chainState={state} owner={keeperChain?.localOwner} />
+                <ChainContent chainStates={registration.chainStates} chainState={state} owner={keeperChain?.localOwner} canEdit={canEdit}/>
               </Grid>
             ))}
         </Grid>
