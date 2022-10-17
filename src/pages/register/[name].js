@@ -12,8 +12,13 @@ const Page = () => {
   const router = useRouter();
   const { name } = router.query;
 
-  if (name !== undefined && name.replace(/[^a-zA-Z0-9]/, '') != name) {
-    router.replace("/register/" + name.replace(/[^a-zA-Z0-9]/, ''));
+  if (name !== undefined) {
+    if (name.replace(/[^a-zA-Z0-9]/, '') != name) {
+      router.replace("/register/" + name.replace(/[^a-zA-Z0-9]/, ''));
+    }
+    if (name.length < 4 || name.length > 32) {
+      router.replace("/register");
+    }
   }
 
   return (

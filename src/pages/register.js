@@ -16,16 +16,33 @@ import * as React from "react";
 
 const Page = () => {
   const [name, setName] = useState("");
+  const [validName, setValidName] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const router = useRouter();
 
   const handleKeyDown = (e) => {
-    if (e.keyCode !== 13) {
+    setShowError(true);
+
+    if (e.keyCode !== 13 || !validName) {
       return;
     }
 
     router.push("register/" + name.toLowerCase());
   };
+
+  const handleInput = (input) => {
+    input = input.replace(/[^a-zA-Z0-9]/, '');
+    setName(input);
+    setShowError(true);
+
+    if (input.length < 4 || input.length > 32) {
+      setValidName(false);
+    }
+    else {
+      setValidName(true);
+    }
+  }
 
   const basepath = "/static/images/";
 
@@ -71,7 +88,7 @@ const Page = () => {
               <TextField
                 fullWidth
                 value={name}
-                onChange={(x) => setName(x.target.value.replace(/[^a-zA-Z0-9]/, ''))}
+                onChange={(x) => handleInput(x.target.value)}
                 onKeyDown={handleKeyDown}
                 InputProps={{
                   startAdornment: (
@@ -86,6 +103,10 @@ const Page = () => {
                 placeholder="Search on-chain name"
                 variant="outlined"
               />
+              {(!validName && showError && name != "") && <Typography style={{ textAlign: "center", color: "red", marginTop: "8px"}}>
+                {name.length < 4 && <>Minimum 4 characters</>}
+                {name.length > 32 && <>At most 32 characters</> }
+              </Typography>}
             </Grid>
           </Grid>
         </Container>
