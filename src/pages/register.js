@@ -70,7 +70,7 @@ const Page = () => {
               <TextField
                 fullWidth
                 value={name}
-                onChange={(x) => setName(x.target.value)}
+                onChange={(x) => setName(x.target.value.replace(/[^a-zA-Z0-9.]/, ''))}
                 onKeyDown={handleKeyDown}
                 InputProps={{
                   startAdornment: (
