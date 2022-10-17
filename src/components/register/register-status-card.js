@@ -5,8 +5,8 @@ import { commitment, namehash } from "../../utils/hash";
 import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 
-const minCommitmentAge = 30;
-const maxCommitmentAge = 1800;
+const minCommitmentAge = 180;
+const maxCommitmentAge = 3600;
 
 export const RegisterStatusCard = ({ name, duration }) => {
   //Global State
