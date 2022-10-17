@@ -49,6 +49,9 @@ export const RegisterCard = ({ name }) => {
 
   return (
     <>
+      <Typography sx={{ mb: 3, ml: 1 }} variant="h4">
+        Register
+      </Typography>
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <Card>

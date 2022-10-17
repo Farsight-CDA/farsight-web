@@ -48,9 +48,6 @@ const InnerPage = ({ name }) => {
         }}
       >
         <Container maxWidth="lg">
-          <Typography sx={{ mb: 3 }} variant="h4">
-            Register
-          </Typography>
           {status === "loading" && (
             <Grid
               container
