@@ -12,13 +12,22 @@ export const WatchCard = ({ name, registration }) => {
       </Typography>
       <Grid container spacing={1}>
         <Grid xs={12}>
-          <ChainContent chainState={registration.chainStates[0]} />
+          <ChainContent
+            chainStates={registration.chainStates}
+            chainState={registration.chainStates[0]}
+          />
         </Grid>
         {registration.chainStates.slice(1).map((state) => (
           <Grid key={state.chainId} xs={6}>
-            <ChainContent chainState={state} />
+            <ChainContent chainStates={registration.chainStates} chainState={state} />
           </Grid>
         ))}
+        <Grid xs={6}>
+          <ChainContent
+            chainStates={registration.chainStates}
+            chainState={registration.chainStates[0]}
+          />
+        </Grid>
       </Grid>
     </>
   );

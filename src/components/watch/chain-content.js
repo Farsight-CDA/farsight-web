@@ -1,5 +1,15 @@
 import PropTypes from "prop-types";
-import { Button, Card, CardContent, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { useContext, useEffect, useState } from "react";
@@ -7,32 +17,30 @@ import { getChainNameByChainId, getLogoNameByChainId } from "../../utils/ChainTr
 import { AuthContext } from "../../contexts/auth-context";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import * as React from "react";
 
-export const ChainContent = ({ chainState }) => {
+import LockIcon from "@mui/icons-material/Lock";
+
+export const ChainContent = ({ chainState, chainStates }) => {
   const { chainId: connectedChainId } = useContext(AuthContext);
-  const {
-    chainId,
-    expiration,
-    localOwner,
-    isKeeper,
-    ownerChangeVersion,
-    registrationVersion,
-    registrar,
-  } = chainState;
+  const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
+    chainState;
 
   const isExpired = expiration <= new Date().getTime() / 1000;
   const basepath = "/static/images/chainlogos/";
 
   //modal
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [open1, setOpen1] = useState(false);
+  const handleOpen1 = () => setOpen1(true);
+  const handleClose1 = () => setOpen1(false);
+  const [open2, setOpen2] = useState(false);
+  const handleOpen2 = () => setOpen2(true);
+  const handleClose2 = () => setOpen2(false);
   const changeLocalOwner = () => {}; //ToDo: machmal
+  const changeToMainChain = () => {}; //ToDo: machmal
 
   return (
     <Card
-      sx={isExpired ? { backgroundColor: "blue" } : { backgroundColor: "lightgray" }}
+      sx={isExpired ? { backgroundColor: "lightgray" } : { backgroundColor: "" }}
       style={chainId === connectedChainId ? { border: "0.2rem solid gray" } : null}
     >
       <CardContent>
@@ -45,14 +53,20 @@ export const ChainContent = ({ chainState }) => {
               {getChainNameByChainId(chainId)}
             </Typography>
           </Grid>
+          <Grid xs={12} />
           {!isExpired && (
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12}>
               <Typography color="textPrimary" gutterBottom variant="h5">
                 Keeper Chain: {isKeeper.toString()}
               </Typography>
-              <Typography color="textPrimary" gutterBottom variant="h5">
-                LocalOwner: {localOwner}
-              </Typography>
+              <Box>
+                <Typography color="textPrimary" gutterBottom variant="h5">
+                  LocalOwner:
+                </Typography>
+                <Typography color="textPrimary" gutterBottom variant="h5">
+                  {localOwner.slice(0, 7) + "..." + localOwner.slice(21, 28)}
+                </Typography>
+              </Box>
               <Typography color="textPrimary" gutterBottom variant="h6">
                 ExpiresAt: {new Date(Number(expiration * 1000)).toLocaleString()}
               </Typography>
@@ -61,90 +75,145 @@ export const ChainContent = ({ chainState }) => {
               </Typography>
             </Grid>
           )}
-
-          {isExpired && <h1>LOCKED</h1>}
-
-          <Grid xs={12} />
-
+          {isExpired && <LockIcon fontSize={"large"} sx={{ ml: 1 }} />}
           {!isExpired && (
-            <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-start" }}>
-              <Tooltip
-                title={
-                  connectedChainId === null
-                    ? "please connect your wallet"
-                    : chainId !== connectedChainId
-                    ? "you are connected to another chain"
-                    : "here you can edit your chain address"
-                }
-              >
-                <span>
+            <>
+              <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-start" }}>
+                <Tooltip
+                  title={
+                    connectedChainId === null
+                      ? "please connect your wallet"
+                      : chainId !== connectedChainId
+                      ? "you are connected to another chain"
+                      : "here you can edit your chain address"
+                  }
+                >
                   <Button
                     disabled={chainId !== connectedChainId}
                     variant="contained"
-                    onClick={handleOpen}
+                    onClick={setOpen2}
+                  >
+                    Send NFT to
+                  </Button>
+                </Tooltip>
+                <Modal
+                  open={open2}
+                  onClose={handleClose2}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                >
+                  <Box maxWidth={"75%"}>
+                    <Card style={{ maxWidth: "4" }}>
+                      <CardContent>
+                        <Typography color="textPrimary" gutterBottom variant="h6" mb={4}>
+                          Hear you can Change to an other Chain
+                        </Typography>
+                        <RadioGroup
+                          aria-labelledby="demo-radio-buttons-group-label"
+                          defaultValue="female"
+                          name="radio-buttons-group"
+                        >
+                          {chainStates.map((state) => (
+                            <FormControlLabel
+                              key={state.chainId}
+                              value={state.chainId}
+                              control={<Radio />}
+                              label={getChainNameByChainId(state.chainId)}
+                            />
+                          ))}
+                        </RadioGroup>
+                        <Button
+                          sx={{ mt: 2 }}
+                          disabled={chainId !== connectedChainId}
+                          variant="contained"
+                          onClick={changeToMainChain && handleClose2}
+                        >
+                          Confirm
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </Box>
+                </Modal>
+              </Grid>
+              <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Tooltip
+                  title={
+                    connectedChainId === null
+                      ? "please connect your wallet"
+                      : chainId !== connectedChainId
+                      ? "you are connected to another chain"
+                      : "here you can edit your chain address"
+                  }
+                >
+                  <Button
+                    disabled={chainId !== connectedChainId}
+                    variant="contained"
+                    onClick={handleOpen1}
                   >
                     edit
                   </Button>
-                </span>
-              </Tooltip>
-              <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-              >
-                <Box maxWidth={"75%"}>
-                  <Card style={{ maxWidth: "4" }}>
-                    <CardContent>
-                      <Grid container spacing={1}>
-                        <Grid
-                          item
-                          xs={12}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Typography color="textPrimary" gutterBottom variant="h6" mb={4}>
-                            Hear you can change your LocalOwner for {getChainNameByChainId(chainId)}
-                          </Typography>
-                        </Grid>
-                        <Grid
-                          item
-                          xs={12}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <TextField defaultValue={localOwner} />
-                        </Grid>
-                        <Grid
-                          item
-                          xs={12}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Button
-                            disabled={chainId !== connectedChainId}
-                            variant="contained"
-                            onClick={handleOpen}
+                </Tooltip>
+                <Modal
+                  open={open1}
+                  onClose={handleClose1}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                >
+                  <Box maxWidth={"75%"}>
+                    <Card style={{ maxWidth: "4" }}>
+                      <CardContent>
+                        <Grid container spacing={1}>
+                          <Grid
+                            item
+                            xs={12}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
                           >
-                            Confirm
-                          </Button>
+                            <Typography color="textPrimary" gutterBottom variant="h6" mb={4}>
+                              Hear you can change your LocalOwner for{" "}
+                              {getChainNameByChainId(chainId)}
+                            </Typography>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField defaultValue={localOwner} />
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Button
+                              disabled={chainId !== connectedChainId}
+                              variant="contained"
+                              onClick={changeLocalOwner && handleClose1}
+                            >
+                              Confirm
+                            </Button>
+                          </Grid>
                         </Grid>
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                </Box>
-              </Modal>
-            </Grid>
+                      </CardContent>
+                    </Card>
+                  </Box>
+                </Modal>
+              </Grid>
+            </>
           )}
         </Grid>
       </CardContent>
