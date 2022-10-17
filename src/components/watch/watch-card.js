@@ -22,12 +22,6 @@ export const WatchCard = ({ name, registration }) => {
             <ChainContent chainStates={registration.chainStates} chainState={state} />
           </Grid>
         ))}
-        <Grid xs={6}>
-          <ChainContent
-            chainStates={registration.chainStates}
-            chainState={registration.chainStates[0]}
-          />
-        </Grid>
       </Grid>
     </>
   );

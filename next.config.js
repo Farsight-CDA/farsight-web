@@ -4,7 +4,7 @@ module.exports = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://farsight-names.de/api/:path*",
+        destination: "https://testnet-farsight.playwo.de/api/:path*",
       },
     ];
   },
