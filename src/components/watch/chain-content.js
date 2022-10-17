@@ -22,7 +22,7 @@ export const ChainContent = ({ chainState }) => {
   const handleClose = () => setOpen(false);
 
   return (
-    <Card style={chainId === connectedChainId ? { border: "0.2rem solid red" } : null}>
+    <Card style={chainId === connectedChainId ? { border: "0.2rem solid gray" } : null}>
       <CardContent>
         <Grid container spacing={0.5}>
           <Grid xs={3}>
@@ -33,11 +33,23 @@ export const ChainContent = ({ chainState }) => {
               {getChainNameByChainId(chainId)}
             </Typography>
           </Grid>
-          <Grid xs={12} sm={6} md={4}>
+          {!isExpired && <Grid xs={12} sm={6} md={4}>
+            <Typography>
+              Keeper? {isKeeper.toString()}
+            </Typography>
+            <Typography>
+              Version: {registrationVersion}.{ownerChangeVersion}
+            </Typography>
             <Typography color="textPrimary" gutterBottom variant="h5">
               LocalOwner: {localOwner}
             </Typography>
-          </Grid>
+            <Typography color="textPrimary" gutterBottom variant="h5">
+              ExpiresAt: {new Date(Number(expiration * 1000)).toLocaleString()}
+            </Typography>
+          </Grid> }
+
+          {isExpired && <h1>LOCKED</h1> }
+
           <Grid xs={12} />
 
           <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-start" }}>

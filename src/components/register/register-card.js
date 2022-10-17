@@ -35,16 +35,16 @@ export const RegisterCard = ({ name }) => {
   const [buyBool, setBuyBool] = useState(true);
 
   const { data: priceData, status } = useQuery(["price", name, year, chainId], async () => {
-    const registerPrice = await fetchPriceData(name, 0, year * 365 * 24 * 60);
-    //    const registerGas = await fetchEstimateRegisterGas(
-    //      chainId,
-    //      name,
-    //      namehash(name),
-    //      address,
-    //      year * 365 * 24 * 60
-    //    );
+    const registerPrice = await fetchPriceData(name, 0, year * 365 * 24 * 60 * 60);
+    const registerGas = await fetchEstimateRegisterGas(
+      chainId,
+      name,
+      namehash(name),
+      address,
+      year * 365 * 24 * 60
+    );
 
-    return { registerPrice: registerPrice };
+    return { registerPrice: registerPrice, registerGas: registerGas };
   });
 
   return (

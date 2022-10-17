@@ -62,7 +62,7 @@ export const fetchPlainName = async (name) => {
 };
 
 export const fetchEstimateRenewGuess = async (chain_id, name, reg_version, duration) => {
-  const response = await fetch("/api/estimateRenewGuess", {
+  const response = await fetch("/api/estimateRenewGas", {
     method: "POST",
     body: JSON.stringify({
       chain_id: chain_id,
@@ -79,7 +79,7 @@ export const fetchEstimateRenewGuess = async (chain_id, name, reg_version, durat
 };
 
 export const fetchEstimateRegisterGas = async (chain_id, plain_name, name, owner, duration) => {
-  const response = await fetch("/api/estimateRegisterGuess", {
+  const response = await fetch("/api/estimateRegisterGas", {
     method: "POST",
     body: JSON.stringify({
       chain_id: chain_id,
