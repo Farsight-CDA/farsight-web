@@ -33,7 +33,6 @@ const Page = () => {
 };
 
 const InnerPage = ({ name }) => {
-  const router = useRouter();
   const { data, status } = useQuery(["registration", name], () => fetchRegistration(name));
 
   return (

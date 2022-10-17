@@ -5,15 +5,14 @@ import { ChainContent }  from "./chain-content";
 
 export const WatchCard = ({ name, registration }) => {
 
-
   return (
     <>
       <Grid container spacing={1}>
         <Grid xs={12}>
-          <ChainContent chainState={registration.chain_states[0]} />
+          <ChainContent chainState={registration.chainStates[0]} />
         </Grid>
         {
-          registration.chain_states.slice(1).map(state => (
+          registration.chainStates.slice(1).map(state => (
             <Grid key={state.chainId} xs={6}>
               <ChainContent chainState={state} />
             </Grid>
@@ -22,8 +21,4 @@ export const WatchCard = ({ name, registration }) => {
       </Grid>
     </>
   );
-};
-
-WatchCard.propTypes = {
-  contents: PropTypes.object.isRequired,
 };

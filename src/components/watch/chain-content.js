@@ -11,10 +11,7 @@ import * as React from "react";
 
 export const ChainContent = ({ chainState }) => {
   const { chainId: connectedChainId } = useContext(AuthContext);
-
-  console.log(chainState);
-
-  //const { chain_id, expiration, localOwner, registrationVersion, ownerChangeVersion } = chainState;
+  const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } = chainState;
 
   const isExpired = expiration <= new Date().getTime() / 1000;
   const basepath = "/static/images/chainlogos/";

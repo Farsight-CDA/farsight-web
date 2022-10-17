@@ -31,7 +31,20 @@ export const fetchRegistration = async (name) => {
     },
   });
 
-  return await response.json();
+  const result = await response.json();
+  return {
+    available: result.available,
+    chainStates: result.chain_states.map(state => {
+      return {
+        chainId: Number(state.chainId),
+        localOwner: state.owner,
+        expiration: state.expiration,
+        isKeeper: state.isKeeper,
+        ownerChangeVersion: state.owner_change_version,
+        registrationVersion: state.registration_version
+      };
+    })
+  };
 };
 
 export const fetchPlainName = async (name) => {
