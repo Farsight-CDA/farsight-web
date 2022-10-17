@@ -17,11 +17,16 @@ import { getChainNameByChainId, getLogoNameByChainId } from "../../utils/ChainTr
 import { AuthContext } from "../../contexts/auth-context";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-
+import { NoKeeperChainHint } from "./no-keeper-chain";
 import LockIcon from "@mui/icons-material/Lock";
 
 export const ChainContent = ({ chainState, chainStates }) => {
   const { chainId: connectedChainId } = useContext(AuthContext);
+
+  if (chainState === undefined) {
+    return (<NoKeeperChainHint></NoKeeperChainHint>);
+  } 
+
   const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
     chainState;
 
