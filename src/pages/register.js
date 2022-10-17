@@ -37,59 +37,56 @@ const Page = () => {
       <Head>
         <title>Register </title>
       </Head>
-      <div sx={{ backgroundImage: "/public/static/images/desert-482068432.jpg" }}>
-        aaa
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            py: 8,
-          }}
-        >
-          <Container maxWidth="lg">
-            <Grid
-              container
-              spacing={1}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              style={{
-                minHeight: "30vh",
-              }}
-            >
-              <Grid item xs={12}>
-                <img src={basepath + "Logo FarSight v1.3.svg"} width="300" height="300" />
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="h3">Farsight</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="h5">Names</Typography>
-              </Grid>
-              <Grid item sm={12}>
-                <TextField
-                  fullWidth
-                  value={name}
-                  onChange={(x) => setName(x.target.value)}
-                  onKeyDown={handleKeyDown}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SvgIcon fontSize="small" color="action">
-                          <SearchIcon />
-                        </SvgIcon>
-                      </InputAdornment>
-                    ),
-                  }}
-                  size="medium"
-                  placeholder="Search on-chain name"
-                  variant="outlined"
-                />
-              </Grid>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Grid
+            container
+            spacing={1}
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{
+              minHeight: "30vh",
+            }}
+          >
+            <Grid item xs={12}>
+              <img src={basepath + "Logo FarSight v1.3.svg"} width="300" height="300" />
             </Grid>
-          </Container>
-        </Box>
-      </div>
+            <Grid item xs={12}>
+              <Typography variant="h3">Farsight</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h5">Names</Typography>
+            </Grid>
+            <Grid item sm={12}>
+              <TextField
+                fullWidth
+                value={name}
+                onChange={(x) => setName(x.target.value)}
+                onKeyDown={handleKeyDown}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SvgIcon fontSize="small" color="action">
+                        <SearchIcon />
+                      </SvgIcon>
+                    </InputAdornment>
+                  ),
+                }}
+                size="medium"
+                placeholder="Search on-chain name"
+                variant="outlined"
+              />
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
     </>
   );
 };
