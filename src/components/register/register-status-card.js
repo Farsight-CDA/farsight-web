@@ -168,8 +168,12 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     setWaitingForTx(true);
 
     try {
+      console.log([name, address, duration, secret, {
+        value: BigInt(bridgeFee),
+      }]);
+
       const receipt = await controller.register(name, address, duration, secret, {
-        value: bridgeFee,
+        value: BigInt(bridgeFee),
       });
       const result = await receipt.wait();
 
