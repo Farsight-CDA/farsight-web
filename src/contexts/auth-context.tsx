@@ -7,49 +7,89 @@ import IRegistrarControllerABI from "../../contracts/abi/IRegistrarController.ab
 import IERC20PaymentProviderABI from "../../contracts/abi/IERC20PaymentProvider.abi.json";
 import IERC20ABI from "../../contracts/abi/IERC20.abi.json";
 
-import { getRegistrarAddress, getControllerAddress } from "../utils/contract-addresses";
+import {
+  getRegistrarAddress,
+  getControllerAddress,
+} from "../utils/contract-addresses";
 import { isSupported } from "../utils/chain-ids";
+import { IRegistrar } from "../../contracts/types/IRegistrar";
+import { IRegistrarController } from "../../contracts/types/IRegistrarController";
+import { IERC20PaymentProvider } from "../../contracts/types/IERC20PaymentProvider";
+import { IERC20 } from "../../contracts/types";
+import { Web3Provider } from "@ethersproject/providers";
 
-export const AuthContext = createContext({
-  web3: null,
-  address: null,
-  chainId: null,
-  walletType: null,
-});
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
 
-export const AuthProvider = (props) => {
+interface IAuthContext {
+  isConnected: boolean;
+  toggleConnection: () => void;
+  address: string | null;
+  chainId: number | null;
+  provider: Web3Provider | null;
+  controller: IRegistrarController | null;
+  registrar: IRegistrar | null;
+  paymentProvider: IERC20PaymentProvider | null;
+  paymentToken: IERC20 | null;
+  secret: string;
+  ResetSecret: () => void;
+}
+
+export const AuthContext = createContext<IAuthContext>(null!);
+
+interface AuthProviderProps {
+  children: any[];
+}
+
+enum WalletType {
+  BrowserEVM,
+}
+
+export const AuthProvider = (props: AuthProviderProps) => {
   const { children } = props;
 
   const [eventsRegistered, setEventsRegistered] = useState(false);
 
-  const [provider, setProvider] = useState(null);
-  const [signer, setSigner] = useState(null);
+  const [provider, setProvider] = useState<Web3Provider | null>(null);
 
-  const [address, setAddress] = useState(null);
-  const [chainId, setChainId] = useState(null);
-  const [walletType, setWalletType] = useState(null);
+  const [address, setAddress] = useState<string | null>(null);
+  const [chainId, setChainId] = useState<number | null>(null);
+  const [walletType, setWalletType] = useState<WalletType | null>(null);
 
-  const [registrar, setRegistrar] = useState(null);
-  const [controller, setController] = useState(null);
+  const [registrar, setRegistrar] = useState<IRegistrar | null>(null);
+  const [controller, setController] = useState<IRegistrarController | null>(
+    null
+  );
 
-  const [paymentProvider, setPaymentProvider] = useState(null);
-  const [paymentToken, setPaymentToken] = useState(null);
+  const [paymentProvider, setPaymentProvider] =
+    useState<IERC20PaymentProvider | null>(null);
+  const [paymentToken, setPaymentToken] = useState<IERC20 | null>(null);
 
-  const [secret, setSecret] =
-    useState(0x0000000000000000000000000000000000000000000000000000006d6168616d); //ToDo: Generate random bytes
+  const [secret, setSecret] = useState<string>(
+    "0x0000000000000000000000000000000000000000000000000000006d6168616d"
+  ); //ToDo: Generate random bytes
 
-  const isConnected = provider != null &&
-      (!isSupported(chainId) || (registrar != null && controller != null && paymentProvider != null && paymentToken != null));
+  const isConnected =
+    provider != null &&
+    chainId != null &&
+    (!isSupported(chainId) ||
+      (registrar != null &&
+        controller != null &&
+        paymentProvider != null &&
+        paymentToken != null));
 
-  const walletTypeRef = useRef();
+  const walletTypeRef = useRef<WalletType | null>();
   walletTypeRef.current = walletType;
-  const providerRef = useRef();
+  const providerRef = useRef<Web3Provider | null>();
   providerRef.current = provider;
 
-  const WalletType = { browserEVM: 1 };
-
-  const getRandomHex = (size) =>
-    [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+  const getRandomHex = (size: number) =>
+    [...Array(size)]
+      .map(() => Math.floor(Math.random() * 16).toString(16))
+      .join("");
 
   function toggleConnection() {
     if (!isConnected) {
@@ -65,7 +105,6 @@ export const AuthProvider = (props) => {
 
   function disconnectWallet() {
     setProvider(null);
-    setSigner(null);
     setAddress(null);
     setChainId(null);
     setWalletType(null);
@@ -80,13 +119,13 @@ export const AuthProvider = (props) => {
 
     const prov = new ethers.providers.Web3Provider(window.ethereum);
 
-    prov.send("eth_requestAccounts", []).then(async (accounts) => {
+    prov.send("eth_requestAccounts", []).then((accounts) => {
       if (accounts.length == 0) {
         disconnectWallet();
         return;
       }
 
-      initWallet(accounts);
+      initWallet().then();
     });
   }
   function ResetSecret() {
@@ -95,7 +134,7 @@ export const AuthProvider = (props) => {
 
   useEffect(() => {
     ResetSecret();
-    initWallet();
+    initWallet().then();
   }, []);
 
   async function initWallet() {
@@ -106,12 +145,12 @@ export const AuthProvider = (props) => {
     const _provider = new ethers.providers.Web3Provider(window.ethereum);
 
     if (!eventsRegistered) {
-      const { provider: ethereum } = _provider;
+      const { provider: ethereum }: any = _provider;
       ethereum.on("accountsChanged", () => {
-        handleAccountChanged(WalletType.browserEVM);
+        handleAccountChanged(WalletType.BrowserEVM);
       });
       ethereum.on("chainChanged", () => {
-        handleChainIdChanged(WalletType.browserEVM);
+        handleChainIdChanged(WalletType.BrowserEVM);
       });
 
       setEventsRegistered(true);
@@ -126,16 +165,10 @@ export const AuthProvider = (props) => {
     const _address = await _signer.getAddress();
     const _chainId = await _signer.getChainId();
 
-    if (_signer === null || _signer === undefined) {
-      disconnectWallet();
-      return;
-    }
-
     setProvider(_provider);
     setAddress(_address);
     setChainId(_chainId);
-    setSigner(_signer);
-    setWalletType(WalletType.browserEVM);
+    setWalletType(WalletType.BrowserEVM);
 
     if (!isSupported(_chainId)) {
       setRegistrar(null);
@@ -146,16 +179,24 @@ export const AuthProvider = (props) => {
     }
 
     const iRegistrarABI = new ethers.utils.Interface(IRegistrarABI);
-    const iRegistrarControllerABI = new ethers.utils.Interface(IRegistrarControllerABI);
-    const iERC20PaymentProviderABI = new ethers.utils.Interface(IERC20PaymentProviderABI);
+    const iRegistrarControllerABI = new ethers.utils.Interface(
+      IRegistrarControllerABI
+    );
+    const iERC20PaymentProviderABI = new ethers.utils.Interface(
+      IERC20PaymentProviderABI
+    );
     const iERC20ABI = new ethers.utils.Interface(IERC20ABI);
 
-    var _registrar = new ethers.Contract(getRegistrarAddress(_chainId), iRegistrarABI, _signer);
-    var _controller = new ethers.Contract(
-      getControllerAddress(_chainId),
+    const _registrar = new ethers.Contract(
+      getRegistrarAddress(_chainId)!,
+      iRegistrarABI,
+      _signer
+    ) as IRegistrar;
+    const _controller = new ethers.Contract(
+      getControllerAddress(_chainId)!,
       iRegistrarControllerABI,
       _signer
-    );
+    ) as IRegistrarController;
 
     const _paymentProviderAddress = await _controller.getPaymentProvider();
 
@@ -163,11 +204,15 @@ export const AuthProvider = (props) => {
       _paymentProviderAddress,
       iERC20PaymentProviderABI,
       _signer
-    );
+    ) as IERC20PaymentProvider;
 
     const _paymentTokenAddress = await _paymentProvider.getTokenAddress();
 
-    var _paymentToken = new ethers.Contract(_paymentTokenAddress, iERC20ABI, _signer);
+    var _paymentToken = new ethers.Contract(
+      _paymentTokenAddress,
+      iERC20ABI,
+      _signer
+    ) as IERC20;
 
     setRegistrar(_registrar);
     setController(_controller);
@@ -175,7 +220,7 @@ export const AuthProvider = (props) => {
     setPaymentToken(_paymentToken);
   }
 
-  function handleAccountChanged(wallet) {
+  function handleAccountChanged(wallet: WalletType | null | undefined) {
     if (wallet != walletTypeRef.current) {
       return;
     }
@@ -183,12 +228,12 @@ export const AuthProvider = (props) => {
     initWallet();
   }
 
-  function handleChainIdChanged(wallet) {
+  function handleChainIdChanged(wallet: WalletType | null | undefined) {
     if (wallet != walletTypeRef.current) {
       return;
     }
 
-    initWallet([address]);
+    initWallet().then();
   }
 
   return (

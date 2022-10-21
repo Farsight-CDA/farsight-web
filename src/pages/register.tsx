@@ -21,7 +21,7 @@ const Page = () => {
 
   const router = useRouter();
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: { keyCode: number }) => {
     setShowError(true);
 
     if (e.keyCode !== 13 || !validName) {
@@ -31,18 +31,17 @@ const Page = () => {
     router.push("/register/" + name);
   };
 
-  const handleInput = (input) => {
-    input = input.replace(/[^a-zA-Z0-9]/, '').toLowerCase();
+  const handleInput = (input: string) => {
+    input = input.replace(/[^a-zA-Z0-9]/, "").toLowerCase();
     setName(input);
     setShowError(true);
 
     if (input.length < 4 || input.length > 32) {
       setValidName(false);
-    }
-    else {
+    } else {
       setValidName(true);
     }
-  }
+  };
 
   const basepath = "/static/images/";
 
@@ -53,14 +52,18 @@ const Page = () => {
       </Head>
       <Box
         style={{
-          'backgroundImage': `url("/static/images/desert-482068432.jpg")` }}
+          backgroundImage: `url("/static/images/desert-482068432.jpg")`,
+        }}
         component="main"
         sx={{
           flexGrow: 1,
           py: 8,
         }}
       >
-        <Container maxWidth="lg" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Container
+          maxWidth="lg"
+          style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+        >
           <Grid
             container
             spacing={1}
@@ -72,7 +75,7 @@ const Page = () => {
               backgroundColor: "darkgray",
               padding: "50px",
               borderRadius: "25px",
-              width: "auto"
+              width: "auto",
             }}
           >
             <Grid item xs={12}>
@@ -81,7 +84,7 @@ const Page = () => {
             <Grid item xs={12}>
               <Typography variant="h3">Farsight</Typography>
             </Grid>
-            <Grid item xs={12} sx={{marginBottom: "10px"}}>
+            <Grid item xs={12} sx={{ marginBottom: "10px" }}>
               <Typography variant="h5">Names</Typography>
             </Grid>
             <Grid item sm={12}>
@@ -103,10 +106,12 @@ const Page = () => {
                 placeholder="Search on-chain name"
                 variant="outlined"
               />
-              {(!validName && showError && name != "") && <Typography style={{ textAlign: "center", color: "red", marginTop: "8px"}}>
-                {name.length < 4 && <>Minimum 4 characters</>}
-                {name.length > 32 && <>At most 32 characters</> }
-              </Typography>}
+              {!validName && showError && name != "" && (
+                <Typography style={{ textAlign: "center", color: "red", marginTop: "8px" }}>
+                  {name.length < 4 && <>Minimum 4 characters</>}
+                  {name.length > 32 && <>At most 32 characters</>}
+                </Typography>
+              )}
             </Grid>
           </Grid>
         </Container>
@@ -114,6 +119,6 @@ const Page = () => {
     </>
   );
 };
-Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;

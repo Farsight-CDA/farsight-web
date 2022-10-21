@@ -43,9 +43,12 @@
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^10.1.0",
+    "@types/node": "^18.11.3",
+    "@types/react": "^18.0.21",
     "eslint": "8.23.1",
     "eslint-config-next": "12.3.0",
     "solc": "^0.8.17",
-    "typechain": "^8.1.0"
+    "typechain": "^8.1.0",
+    "typescript": "^4.8.4"
   }
 }

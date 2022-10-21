@@ -40,12 +40,12 @@ Fahrsight-web
 	├── theme
 	├── utils
 	└── pages
-		├── 404.js
-		├── _app.js
+		├── 404.tsx
+		├── _app.tsx
 		├── _document.js
-		├── account.js
-		├── index.js
-		├── register.js
+		├── account.tsx
+		├── index.tsx
+		├── register.tsx
 ```
 
 ## Resources
