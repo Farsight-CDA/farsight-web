@@ -2,6 +2,7 @@ import Head from "next/head";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { Layout } from "../components/layout/layout";
 import * as React from "react";
+import { DashboardLayout } from "../components/dashboard-layout";
 
 const Page = () => (
     <>
@@ -39,6 +40,6 @@ const Page = () => (
     </>
 );
 
-Page.getLayout = (page: any) => <Layout>{page}</Layout>;
+Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
