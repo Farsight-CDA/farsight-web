@@ -7,6 +7,7 @@ import { environment } from "../../utils/environment";
 import { Environment } from "@axelar-network/axelarjs-sdk";
 import { BigNumber } from "ethers";
 import { AxelarContext } from "../../contexts/axelar-context";
+import { getNativeAssetByChainId } from "../../utils/ChainTranslation";
 
 const minCommitmentAge = environment == Environment.DEVNET ? 30 : 180;
 const maxCommitmentAge = 3600;
@@ -23,6 +24,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }: RegisterStatus
   const {
     chainId,
     address,
+    balance: nativeBalance,
     paymentToken,
     controller,
     paymentProvider,
@@ -255,9 +257,17 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }: RegisterStatus
         </StepLabel>
         <StepContent>
           <Typography>This step will claim the name NFT to your wallet.</Typography>
+          
+          {nativeBalance! < bridgeFee! && <Typography sx={{ color: 'red' }}>
+            Balance too for cross chain fee!
+          </Typography>}
+          {nativeBalance! < bridgeFee! && (<Typography sx={{ color: 'red' }}>
+            Require {(bridgeFee!.div(BigNumber.from("1000000000000000")).toNumber() / 1000).toLocaleString()} {getNativeAssetByChainId(chainId!)}
+          </Typography>)}
+
           <Button
             sx={{ mt: 2, mb: 2 }}
-            disabled={waitingForTx || registerTx != null}
+            disabled={waitingForTx || registerTx != null || nativeBalance! < bridgeFee}
             onClick={postRegisterTransaction}
             variant="contained"
           >
