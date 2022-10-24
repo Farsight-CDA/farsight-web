@@ -1,13 +1,24 @@
 import { createTheme } from "@mui/material";
 
+declare module "@mui/material/styles" {
+  interface BreakpointOverrides {
+    xs: false;
+    sm: false;
+    md: false;
+    lg: false;
+    xl: false;
+    mobile: true;
+    tablet: true;
+    pc: true;
+  }
+}
+
 export const theme = createTheme({
   breakpoints: {
     values: {
-      xs: 0,
-      sm: 600,
-      md: 1000,
-      lg: 1200,
-      xl: 1920,
+      mobile: 0,
+      tablet: 500,
+      pc: 1024,
     },
   },
   components: {

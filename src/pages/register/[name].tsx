@@ -60,7 +60,7 @@ const InnerPage = ({ name }: InnerNamePageProps) => {
           py: 8,
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="pc">
           {status === "loading" && (
             <Grid
               container

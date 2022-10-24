@@ -28,8 +28,7 @@ interface NavbarProps {
 }
 
 export const Navbar = (props: NavbarProps) => {
-  const { isConnected, toggleConnection, address, chainId } =
-    useContext(AuthContext);
+  const { isConnected, toggleConnection, address, chainId } = useContext(AuthContext);
 
   const { onSidebarOpen, ...other } = props;
 
@@ -64,10 +63,10 @@ export const Navbar = (props: NavbarProps) => {
       <DashboardNavbarRoot
         sx={{
           left: {
-            lg: 280,
+            pc: 280,
           },
           width: {
-            lg: "calc(100% - 280px)",
+            pc: "calc(100% - 280px)",
           },
         }}
         {...other}
@@ -84,8 +83,8 @@ export const Navbar = (props: NavbarProps) => {
             onClick={onSidebarOpen}
             sx={{
               display: {
-                xs: "inline-flex",
-                lg: "none",
+                mobile: "inline-flex",
+                pc: "none",
               },
             }}
           >
@@ -109,9 +108,7 @@ export const Navbar = (props: NavbarProps) => {
               variant="standard"
             />
             {!validName && showError && name !== "" && (
-              <Typography
-                style={{ textAlign: "center", color: "red", marginTop: "8px" }}
-              >
+              <Typography style={{ textAlign: "center", color: "red", marginTop: "8px" }}>
                 {name.length < 4 && <>Minimum 4 characters</>}
                 {name.length > 32 && <>At most 32 characters</>}
               </Typography>

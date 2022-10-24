@@ -8,6 +8,7 @@ import { ShoppingBag as ShoppingBagIcon } from "../../icons/shopping-bag";
 import { User as UserIcon } from "../../icons/user";
 import { NavItem } from "../navbar/nav-item";
 import Image from "next/image";
+import { Theme } from "@mui/system";
 
 const items = [
   {
@@ -34,7 +35,7 @@ interface DashboardSidebarProps {
 
 export const DashboardSidebar = ({ open, onClose }: DashboardSidebarProps) => {
   const router = useRouter();
-  const lgUp = useMediaQuery("1200", {
+  const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up("pc"), {
     defaultMatches: true,
     noSsr: false,
   });
@@ -86,12 +87,7 @@ export const DashboardSidebar = ({ open, onClose }: DashboardSidebarProps) => {
         />
         <Box sx={{ flexGrow: 1 }}>
           {items.map((item) => (
-            <NavItem
-              key={item.title}
-              icon={item.icon}
-              href={item.href}
-              title={item.title}
-            />
+            <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
           ))}
         </Box>
       </Box>
