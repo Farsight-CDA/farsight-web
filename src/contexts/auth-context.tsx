@@ -1,6 +1,6 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 import IRegistrarABI from "../../contracts/abi/IRegistrar.abi.json";
 import IRegistrarControllerABI from "../../contracts/abi/IRegistrarController.abi.json";
@@ -30,6 +30,7 @@ interface IAuthContext {
   isMainChain: boolean,
   toggleConnection: () => void;
   address: string | null;
+  balance: BigNumber | null;
   chainId: number | null;
   provider: Web3Provider | null;
   controller: IRegistrarController | null;
@@ -56,6 +57,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
   const [provider, setProvider] = useState<Web3Provider | null>(null);
 
   const [address, setAddress] = useState<string | null>(null);
+  const [balance, setBalance] = useState<BigNumber | null>(null);
   const [chainId, setChainId] = useState<number | null>(null);
   const [walletType, setWalletType] = useState<WalletType | null>(null);
 
@@ -172,9 +174,11 @@ export const AuthProvider = (props: AuthProviderProps) => {
     const _signer = _provider.getSigner();
     const _address = await _signer.getAddress();
     const _chainId = await _signer.getChainId();
+    const _balance = await _provider.getBalance(_address);
 
     setProvider(_provider);
     setAddress(_address);
+    setBalance(_balance);
     setChainId(_chainId);
     setWalletType(WalletType.BrowserEVM);
 
@@ -253,6 +257,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
         provider,
         toggleConnection,
         address,
+        balance,
         chainId,
         controller,
         registrar,

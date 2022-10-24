@@ -31,7 +31,7 @@ interface ChainContentProps {
 }
 
 export const ChainContent = ({ registration, keeperChainId, chainState, canEdit, name }: ChainContentProps) => {
-  const { chainId: connectedChainId, address } = useContext(AuthContext);
+  const { isConnected, chainId: connectedChainId, address } = useContext(AuthContext);
 
   //modal
   const [open1, setOpen1] = useState(false);
@@ -99,8 +99,8 @@ export const ChainContent = ({ registration, keeperChainId, chainState, canEdit,
                     connectedChainId === null
                       ? "please connect your wallet"
                       : chainId !== connectedChainId
-                      ? "you are connected to another chain"
-                      : "Here you can send your NFT to another supported Chain"
+                        ? "you are connected to another chain"
+                        : "Here you can send your NFT to another supported Chain"
                   }
                 >
                    <span>
@@ -126,9 +126,9 @@ export const ChainContent = ({ registration, keeperChainId, chainState, canEdit,
               <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                 {canEdit &&<Tooltip
                   title={
-                    connectedChainId === null
+                    !isConnected
                       ? "please connect your wallet"
-                      : chainId !== connectedChainId
+                      : chainId !== keeperChainId
                       ? "you are connected to another chain"
                       : "here you can invalidate previous owners records on all chains"
                   }
@@ -161,9 +161,9 @@ export const ChainContent = ({ registration, keeperChainId, chainState, canEdit,
           <p>Uninitialized or Expired</p>
           {canEdit && <Tooltip
             title={
-              connectedChainId === null
+              !isConnected
                 ? "Please connect your wallet"
-                : mainChainId !== connectedChainId
+                : chainId !== keeperChainId
                   ? "You need to connect to your NFT chain"
                   : "Here you can set records cross chain"
             }

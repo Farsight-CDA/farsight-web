@@ -1,12 +1,16 @@
 import { EvmChain } from "@axelar-network/axelarjs-sdk";
+import { LoadingButton } from "@mui/lab";
 import { Button, Card, CardContent, FormControl, FormControlLabel, Grid, Input, InputAdornment, InputLabel, Radio, RadioGroup, Step, StepContent, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { BigNumber } from "ethers";
 import { useContext, useState } from "react";
+import { useQuery } from "react-query";
 import { AuthContext } from "../../../contexts/auth-context";
 import { AxelarContext } from "../../../contexts/axelar-context";
-import { getBridgeTargetNameByChainId, getChainNameByChainId, getEVMChainByChainId } from "../../../utils/ChainTranslation";
+import { mainChainId } from "../../../utils/chain-ids";
+import { getBridgeTargetNameByChainId, getChainNameByChainId, getEVMChainByChainId, getNativeAssetByChainId } from "../../../utils/ChainTranslation";
 import { namehash } from "../../../utils/hash";
-import { Registration } from "../../../utils/HinterEnde";
+import { fetchEstimateRegisterGas, Registration } from "../../../utils/HinterEnde";
 
 export interface BridgeNFTModalProps {
     keeperChainId: number;
@@ -15,10 +19,14 @@ export interface BridgeNFTModalProps {
 }
 
 export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTModalProps) => {
-    const { chainId, registrar } = useContext(AuthContext);
-    const { getTransactionExplorerURL } = useContext(AxelarContext);
+    const { chainId, balance, address, registrar, isSupported } = useContext(AuthContext);
 
-    const [activeStep, setActiveStep] = useState<number>(0);
+    if (!isSupported || chainId !== keeperChainId ||
+        chainId === null /* TS Hint */ || registrar === null /* TS Hint */ || balance === null /* TS Hint */) {
+        return (<></>);
+    }
+
+    const { axelarClient, getTransactionExplorerURL } = useContext(AxelarContext);
     
     const [selectedChainId, setSelectedChainId] = useState<string>("");
     const [targetChainId, setTargetChainId] = useState<number | null>(null);
@@ -28,9 +36,44 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
 
     const [bridgeTx, setBridgeTx] = useState<string | null>(null);
 
+    const { status, data: gasFee } = useQuery(["bridgeGasEstimate", targetChainId], fetchBridgeGasFeeEstimation);
 
-    if (chainId !== keeperChainId || chainId === null /* TS Hint */ || registrar === null /* TS Hint */) {
-        return (<></>);
+    console.log(status);
+
+    const activeStep =
+        targetChainId === null || status === 'loading' || status === 'error'
+            ? 0
+            : targetAddress === null
+                ? 1
+                : 2;
+
+    async function fetchBridgeGasFeeEstimation() {
+        if (targetChainId === null) {
+            return BigNumber.from(0);
+        }
+
+        const registerGas = 1000000; 
+        //(await fetchEstimateRegisterGas(
+        //    chainId!,
+        //    name,
+        //    address!,
+        //    1 * 365 * 24 * 60 * 60
+        //)).est;
+
+        const gasEstimate = BigNumber.from(await axelarClient.estimateGasFee(
+            getEVMChainByChainId(chainId!),
+            getEVMChainByChainId(mainChainId!),
+            getNativeAssetByChainId(chainId!),
+            registerGas
+        ));
+
+        if (gasEstimate.eq(0)) {
+            throw new Error("Failed to estimate gas!");
+        }
+
+        //Back and forth plus extra
+        var gasFee = gasEstimate.mul(3);
+        return gasFee;
     }
 
     function selectTargetChainId() {
@@ -39,7 +82,6 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
         }
 
         setTargetChainId(Number.parseInt(selectedChainId));
-        setActiveStep(1);
     }
 
     function selectTargetAddress() {
@@ -48,11 +90,10 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
         }
 
         setTargetAddress(selectedAddress);
-        setActiveStep(2);
     }
 
     async function postBridgeTransaction(){
-        if (targetChainId === null || targetAddress === null){
+        if (targetChainId === null || targetAddress === null || status !== 'success'){
             return;
         }
 
@@ -61,7 +102,10 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
         const receipt = await registrar!.bridgeNameTo(
             selectedChain, 
             namehash(name),
-            targetAddress    
+            targetAddress,
+            {
+                value: gasFee
+            }
         );
 
         const result = await receipt.wait();
@@ -73,8 +117,6 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
 
         setBridgeTx(receipt.hash);
     }
-
-
 
     return (
         <Card style={{ maxWidth: "4" }}>
@@ -102,14 +144,18 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
                                         />
                                     ))}
                                 </RadioGroup>
-                            <Button
+                            {(targetChainId === null && status == 'success') && <Button
                                 disabled={selectedChainId === ""}
                                 variant="contained"
                                 color="secondary"
                                 onClick={selectTargetChainId}
                             >   
                                 Select
-                            </Button>
+                            </Button>}
+                            {(targetChainId !== null && status == 'loading' && <LoadingButton>
+                                Loading...
+                            </LoadingButton>)}
+                            
                         </StepContent>
                     </Step>
                     <Step>
@@ -141,8 +187,15 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
                             Post Transaction
                         </StepLabel>
                         <StepContent>
+                            {balance < gasFee! && <Typography sx={{color: 'red'}}>
+                                Balance too for cross chain fee!
+                            </Typography>}
+                            {balance < gasFee! && (<Typography sx={{ color: 'red' }}>
+                                Require {(gasFee!.div(BigNumber.from("1000000000000000")).toNumber() / 1000).toLocaleString()} {getNativeAssetByChainId(chainId)}
+                            </Typography>)}
+
                             <Button
-                                disabled={selectedAddress === ""}
+                                disabled={balance < gasFee!}
                                 variant="contained"
                                 color="secondary"
                                 onClick={postBridgeTransaction}

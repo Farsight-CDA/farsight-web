@@ -1,3 +1,3 @@
 import { Environment } from "@axelar-network/axelarjs-sdk";
 
-export const environment: Environment = Environment.MAINNET;
+export const environment: Environment = Environment.TESTNET;

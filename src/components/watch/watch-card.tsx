@@ -76,7 +76,7 @@ export const WatchCard = ({ name, registration }: WatchCardProps) => {
                 <ChainContent 
                   registration={registration} 
                   chainState={state} 
-                  canEdit={canEdit}
+                  canEdit={false}
                   name={name}
                   keeperChainId={keeperChain === null ? null : keeperChain.chainId}
                 />

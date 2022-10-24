@@ -170,7 +170,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }: RegisterStatus
 
     try {
       const receipt = await controller!.register(name, address!, duration, secret, {
-        value: BigNumber.from(bridgeFee),
+        value: bridgeFee,
       });
       const result = await receipt.wait();
 
