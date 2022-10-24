@@ -3,8 +3,13 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Box, Button, ListItem } from '@mui/material';
 
-export const NavItem = (props) => {
-  const { href, icon, title, ...others } = props;
+interface NavItemProps {
+  href: string;
+  icon: string;
+  title: string;
+}
+
+export const NavItem = ({ href, icon, title }: NavItemProps) => {
   const router = useRouter();
   const active = href ? (router.pathname === href) : false;
 
@@ -17,7 +22,6 @@ export const NavItem = (props) => {
         py: 0,
         px: 2
       }}
-      {...others}
     >
       <NextLink
         href={href}
@@ -28,17 +32,17 @@ export const NavItem = (props) => {
           startIcon={icon}
           disableRipple
           sx={{
-            backgroundColor: active && 'rgba(255,255,255, 0.08)',
+            backgroundColor: active ? 'rgba(255,255,255, 0.08)' : 'transparent',
             borderRadius: 1,
             color: active ? 'secondary.main' : 'neutral.300',
-            fontWeight: active && 'fontWeightBold',
+            fontWeight: active ? 'fontWeightBold' : 'fontWeight',
             justifyContent: 'flex-start',
             px: 3,
             textAlign: 'left',
             textTransform: 'none',
             width: '100%',
             '& .MuiButton-startIcon': {
-              color: active ? 'secondary.main' : 'neutral.400'
+              color: (active ? 'secondary.main' : 'neutral.400')
             },
             '&:hover': {
               backgroundColor: 'rgba(255,255,255, 0.08)'
@@ -52,10 +56,4 @@ export const NavItem = (props) => {
       </NextLink>
     </ListItem>
   );
-};
-
-NavItem.propTypes = {
-  href: PropTypes.string,
-  icon: PropTypes.node,
-  title: PropTypes.string
 };
