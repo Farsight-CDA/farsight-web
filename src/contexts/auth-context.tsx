@@ -11,7 +11,7 @@ import {
   getRegistrarAddress,
   getControllerAddress,
 } from "../utils/contract-addresses";
-import { isSupported } from "../utils/chain-ids";
+import { isSupportedChainId, mainChainId } from "../utils/chain-ids";
 import { IRegistrar } from "../../contracts/types/IRegistrar";
 import { IRegistrarController } from "../../contracts/types/IRegistrarController";
 import { IERC20PaymentProvider } from "../../contracts/types/IERC20PaymentProvider";
@@ -26,6 +26,8 @@ declare global {
 
 interface IAuthContext {
   isConnected: boolean;
+  isSupported: boolean,
+  isMainChain: boolean,
   toggleConnection: () => void;
   address: string | null;
   chainId: number | null;
@@ -49,8 +51,6 @@ enum WalletType {
 }
 
 export const AuthProvider = (props: AuthProviderProps) => {
-  const { children } = props;
-
   const [eventsRegistered, setEventsRegistered] = useState(false);
 
   const [provider, setProvider] = useState<Web3Provider | null>(null);
@@ -75,11 +75,19 @@ export const AuthProvider = (props: AuthProviderProps) => {
   const isConnected =
     provider != null &&
     chainId != null &&
-    (!isSupported(chainId) ||
+    (!isSupportedChainId(chainId) ||
       (registrar != null &&
         controller != null &&
         paymentProvider != null &&
         paymentToken != null));
+
+  const isSupported = 
+    isConnected &&
+    isSupportedChainId(chainId);
+
+  const isMainChain =
+    isSupported &&
+    chainId == mainChainId;
 
   const walletTypeRef = useRef<WalletType | null>();
   walletTypeRef.current = walletType;
@@ -170,7 +178,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
     setChainId(_chainId);
     setWalletType(WalletType.BrowserEVM);
 
-    if (!isSupported(_chainId)) {
+    if (!isSupportedChainId(_chainId)) {
       setRegistrar(null);
       setController(null);
       setPaymentProvider(null);
@@ -240,6 +248,8 @@ export const AuthProvider = (props: AuthProviderProps) => {
     <AuthContext.Provider
       value={{
         isConnected,
+        isSupported,
+        isMainChain,
         provider,
         toggleConnection,
         address,
@@ -252,13 +262,9 @@ export const AuthProvider = (props: AuthProviderProps) => {
         ResetSecret,
       }}
     >
-      {children}
+      {props.children}
     </AuthContext.Provider>
   );
-};
-
-AuthProvider.propTypes = {
-  children: PropTypes.node,
 };
 
 export const AuthConsumer = AuthContext.Consumer;

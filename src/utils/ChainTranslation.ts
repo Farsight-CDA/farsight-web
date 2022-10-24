@@ -1,8 +1,8 @@
 import { secondsInWeek } from "date-fns/fp";
 import { EvmChain, GasToken } from "@axelar-network/axelarjs-sdk";
-import { polygonChainId, fantomChainId, bscChainId, fantomTestnetChainId } from "./chain-ids";
+import { polygonChainId, fantomChainId, fantomTestnetChainId } from "./chain-ids";
 
-export function getChainNameByChainId(chainId) {
+export function getChainNameByChainId(chainId: number): string {
   switch (chainId) {
     case 1: return "Ethereum";
     case 3: return "Ropsten Test Network";
@@ -17,50 +17,49 @@ export function getChainNameByChainId(chainId) {
     case 588: return "Metis Stardust Test Network";
     case 1313161554: return "Aurora Main Network";
     case 1313161555: return "Aurora Test Network";
-    case bscChainId: return "Binance Smart Chain";
+
     case 97: return "Binance Smart Chain Test Network";
     case fantomChainId: return "Fantom";
 
     case fantomTestnetChainId: return "Fantom TestNet";
   }
 
-  return null;
+  throw new Error("Unknown chainId for ChainName: " + chainId);
 };
 
-export function getLogoNameByChainId(chainId) {
+export function getLogoNameByChainId(chainId: number): string {
   switch (chainId) {
     case polygonChainId: return "polygon-matic.svg";
     case 80001: return "polygon-matic.svg";
-    case bscChainId: return "binance-smart-chain.svg";
+
     case 97: return "binance-smart-chain.svg";
     case fantomChainId: return "fantom-ftm-logo.svg";
 
     case fantomTestnetChainId: return "fantom-ftm-logo.svg";
   }
 
-  return null;
+  throw new Error("Unknown chainId for LogoName: " + chainId);
 }
 
-export function getEVMChainByChainId(chainId) {
+export function getEVMChainByChainId(chainId: number): EvmChain {
   switch (chainId) {
     case polygonChainId: return EvmChain.POLYGON;
     case fantomChainId: return EvmChain.FANTOM;
-    case bscChainId: return EvmChain.BINANCE;
 
     case fantomTestnetChainId: return EvmChain.FANTOM;
   }
 
-  return null;
+
+  throw new Error("Unknown chainId for EvmChain: " + chainId); 
 }
 
-export function getNativeAssetByChainId(chainId) {
+export function getNativeAssetByChainId(chainId: number): GasToken {
   switch (chainId) {
     case polygonChainId: return GasToken.MATIC;
     case fantomChainId: return GasToken.FTM;
-    case bscChainId: return GasToken.BINANCE;
 
     case fantomTestnetChainId: return GasToken.FTM;
   }
 
-  return null;
+  throw new Error("Unknown chainId for GasToken: " + chainId);
 }

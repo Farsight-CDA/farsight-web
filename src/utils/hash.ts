@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 
-export const namehash = name => {
+export function namehash(name: string) {
   return ethers.utils.solidityKeccak256([ "string" ], [ name ]);
 }
 
-export const commitment = (name, owner, duration, secret) => {
+export function commitment(name: BigInt, owner: string, duration: number, secret: string) {
   return ethers.utils.solidityKeccak256(["uint256", "address", "uint256", "bytes32"], [name, owner, duration, secret]);
 } 

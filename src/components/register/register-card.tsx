@@ -21,17 +21,21 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/auth-context";
-import { isSupported, mainChainId } from "../../utils/chain-ids";
 import { RegisterStatusCard } from "./register-status-card";
 import { useQuery } from "react-query";
 import { fetchEstimateRegisterGas, fetchPriceData } from "../../utils/HinterEnde";
 import { namehash } from "../../utils/hash";
 import { AxelarContext } from "../../contexts/axelar-context";
 import { getEVMChainByChainId, getNativeAssetByChainId } from "../../utils/ChainTranslation";
-import { ethers } from "../../../node_modules/ethers/lib/index";
+import { mainChainId } from "../../utils/chain-ids";
+import { BigNumber } from "ethers";
 
-export const RegisterCard = ({ name }) => {
-  const { chainId, address } = useContext(AuthContext);
+interface RegisterCardProps {
+  name: string;
+}
+
+export const RegisterCard = ({ name }: RegisterCardProps) => {
+  const { isConnected, isSupported, isMainChain, chainId, address } = useContext(AuthContext);
   const { axelarClient } = useContext(AxelarContext);
 
   const [year, setYear] = useState(1);
@@ -41,9 +45,9 @@ export const RegisterCard = ({ name }) => {
     return (await fetchPriceData(name, 0, year * 365 * 24 * 60 * 60)).amount;
   });
 
-  const { data: gasFee, status: gasFeeStatus } = useQuery(["gasFee", chainId], async () => {
-    if (!isSupported(chainId) || chainId == mainChainId) {
-      return 0;
+  const { data: gasFee, status: gasFeeStatus } = useQuery(["register", chainId, isConnected], async () => {
+    if (!isSupported || chainId == mainChainId || (chainId === null /* TS Hint*/)) {
+      return BigNumber.from(0);
     }
 
     const registerGas = (await fetchEstimateRegisterGas(
@@ -54,14 +58,15 @@ export const RegisterCard = ({ name }) => {
       year * 365 * 24 * 60 * 60
     )).est;
 
-    //Back and forth plus extra
-    var gasFee = 2.5 * await axelarClient.estimateGasFee(
+    const gasEstimate = BigNumber.from(await axelarClient.estimateGasFee(
       getEVMChainByChainId(chainId),
       getEVMChainByChainId(mainChainId),
       getNativeAssetByChainId(chainId),
       registerGas
-    );
+    ));
 
+    //Back and forth plus extra
+    var gasFee = gasEstimate.mul(3);
     return gasFee;
   });
 
@@ -75,7 +80,7 @@ export const RegisterCard = ({ name }) => {
         Register
       </Typography>
       <Grid container spacing={1}>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <Card>
             <CardContent>
               <Grid container direction={"row"}>
@@ -88,18 +93,18 @@ export const RegisterCard = ({ name }) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <Card>
             <CardContent>
               <Grid container>
                 {/* Registration Period */}
-                <Grid xs={12} sm={5} md={3} item>
-                  <Typography color="textPrimary" gutterBottom variant="h7">
+                <Grid xs={12} sm={5} md={3}>
+                  <Typography color="textPrimary" gutterBottom variant="h6">
                     Registration Period
                   </Typography>
                   <Divider />
                   <Grid container direction={"row"}>
-                    <Grid item xs={2} sm={2} md={2}>
+                    <Grid xs={2} sm={2} md={2}>
                       <IconButton
                         onClick={() => (year < 2 ? null : setYear(year - 1))}
                         aria-label="delete"
@@ -107,7 +112,7 @@ export const RegisterCard = ({ name }) => {
                         <RemoveIcon />
                       </IconButton>
                     </Grid>
-                    <Grid item xs={8} sm={8} md={8}>
+                    <Grid xs={8} sm={8} md={8}>
                       <Typography
                         align="center"
                         color="textPrimary"
@@ -118,7 +123,7 @@ export const RegisterCard = ({ name }) => {
                         {year > 1 ? year + " Years" : year + " Year"}
                       </Typography>
                     </Grid>
-                    <Grid item xs={2} sm={2} md={2}>
+                    <Grid xs={2} sm={2} md={2}>
                       <IconButton onClick={() => setYear(year + 1)} aria-label="delete">
                         <AddIcon />
                       </IconButton>
@@ -140,8 +145,8 @@ export const RegisterCard = ({ name }) => {
                   <KeyboardDoubleArrowRightIcon fontSize={"large"} />
                 </Grid>
                 {/* Registration price to pay */}
-                <Grid item xs={12} sm={5} md={3}>
-                  <Typography color="textPrimary" gutterBottom variant="h7">
+                <Grid xs={12} sm={5} md={3}>
+                  <Typography color="textPrimary" gutterBottom variant="h6">
                     Registration fee
                   </Typography>
                   <Divider />
@@ -166,14 +171,16 @@ export const RegisterCard = ({ name }) => {
                   <KeyboardDoubleArrowRightIcon fontSize={"large"} />
                 </Grid>
                 {/* Total Price */}
-                <Grid item xs={12} sm={12} md={4}>
-                  <Typography color="textPrimary" gutterBottom variant="h7">
+                <Grid xs={12} sm={12} md={4}>
+                  <Typography color="textPrimary" gutterBottom variant="h6">
                     The price depending on the chain.
                   </Typography>
                   <Divider />
                   {gasFeeStatus == 'success' && <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
-                    {gasFee == 0 && <>Bridging not necessary.</> }
-                    {gasFee != 0 && <>Bridging: {Math.round(10000 * gasFee / Math.pow(10, 18)) / 10000} {getNativeAssetByChainId(chainId)}</>}
+                    {!isConnected && <>No Wallet Connected</>}
+                    {(isConnected && !isSupported) && <>Unsupported Chain</> }
+                    {(isMainChain) && <>Bridging not necessary</>}
+                    {(isSupported && !isMainChain && (chainId !== null /* TS Hint */)) && <>Bridging: {(gasFee.div("1000000000000000").toNumber() / 1000).toLocaleString()} {getNativeAssetByChainId(chainId)}</>}
                   </Typography>}
                   {gasFeeStatus === 'error' || gasFeeStatus === 'loading' && <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
                     Bridging: loading...
@@ -189,13 +196,12 @@ export const RegisterCard = ({ name }) => {
               <Card>
                 <CardContent>
                   <Grid container>
-                    <Grid item xs={6}>
+                    <Grid xs={6}>
                       <Typography sx={{ ml: 5 }} color="textPrimary" variant="h5">
                         This Name is available you can buy it now
                       </Typography>
                     </Grid>
                     <Grid
-                      item
                       xs={6}
                       style={{
                         display: "flex",
@@ -217,18 +223,27 @@ export const RegisterCard = ({ name }) => {
               <Card>
                 <CardContent>
                   <Typography color="textPrimary" gutterBottom variant="h5">
-                    Registering a name requires you to complete 5 steps
+                    Registering a name requires you to complete 4 simple steps
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
             <Grid xs={12}>
               <Card sx={{ p: 3 }}>
-                <RegisterStatusCard
+                {(isSupported && gasFeeStatus == 'success') && <RegisterStatusCard
                   name={name}
                   duration={year * 365 * 24 * 60 * 60}
                   bridgeFee={gasFee}
-                ></RegisterStatusCard>
+                ></RegisterStatusCard>}
+                {(!isConnected && gasFeeStatus == 'success') && <p>
+                    No Wallet Connected
+                  </p>}
+                {(isConnected && !isSupported && gasFeeStatus == 'success') && <p>
+                    Unsupported Chain!
+                    Please connect to Polygon or Fantom!
+                  </p>}
+                {gasFeeStatus == 'loading' && <p>Loading...</p>}
+                {gasFeeStatus == 'error' && <p>Failed loading Axelar data. Try again later!</p>}
               </Card>
             </Grid>
           </>

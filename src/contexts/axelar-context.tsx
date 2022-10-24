@@ -1,30 +1,38 @@
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { AxelarQueryAPI } from "@axelar-network/axelarjs-sdk"
+import { environment } from "../utils/environment";
 
-export const AxelarContext = createContext({});
+interface IAxelarContext {
+  axelarClient: AxelarQueryAPI;
+}
 
-export const AxelarProvider = (props) => {
-  const { children } = props;
+export const AxelarContext = createContext<IAxelarContext>(null!);
 
-  const [axelarClient, setAxelarClient] = useState(null);
+interface AxelarProviderProps {
+  children: any[];
+}
+
+
+export const AxelarProvider = (props: AxelarProviderProps) => {
+
+  const [axelarClient, setAxelarClient] = useState<AxelarQueryAPI | null>(null);
 
   useEffect(() => {
     setAxelarClient(new AxelarQueryAPI({
-      environment: "testnet"
+      environment: environment
     }));
   }, []);
 
 
   return (
-    <AxelarContext.Provider value={{ axelarClient }}>
-      {children}
+    <AxelarContext.Provider value={
+      { 
+        axelarClient: axelarClient! 
+      }}>
+        {props.children}
     </AxelarContext.Provider>
   );
 }
-
-AxelarProvider.propTypes = {
-  children: PropTypes.node,
-};
 
 export const AxelarConsumer = AxelarContext.Consumer;

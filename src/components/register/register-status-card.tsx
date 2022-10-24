@@ -1,57 +1,80 @@
 import { useState, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../../contexts/auth-context";
-import { isSupported, mainChainId ,isTestnet} from "../../utils/chain-ids";
 import { commitment, namehash } from "../../utils/hash";
 import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
+import { environment } from "../../utils/environment";
+import { Environment } from "@axelar-network/axelarjs-sdk";
+import { BigNumber } from "ethers";
 
-const minCommitmentAge = isTestnet ? 30 : 180;
+const minCommitmentAge = environment == Environment.DEVNET ? 30 : 180;
 const maxCommitmentAge = 3600;
 
-export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
+interface RegisterStatusCardProps {
+  name: string;
+  duration: number;
+  bridgeFee: BigNumber;
+}
+
+
+//Only drawn if isConnected, isSupported are true
+export const RegisterStatusCard = ({ name, duration, bridgeFee }: RegisterStatusCardProps) => {
   const {
-    isConnected,
-    address,
     chainId,
+    address,
+    paymentToken,
     controller,
     paymentProvider,
-    paymentToken,
     secret,
-    ResetSecret,
+    isMainChain,
+    ResetSecret
   } = useContext(AuthContext);
 
+  const commitmentHash = commitment(BigInt(namehash(name)), address!, duration, secret);
+  
+  async function loadStatusFromChain() {
+    const _approvedBalance = await paymentToken!.allowance(address!, paymentProvider!.address);
+    const _balance = await paymentToken!.balanceOf(address!);
+    const _commitmentTime = await controller!.getCommitment(commitmentHash);
+    const _price = await paymentProvider!.getPrice(name, 0, duration);
+
+    setApprovedBalance(_approvedBalance.toBigInt());
+    setBalance(_balance.toBigInt());
+    setCommitmentTime(_commitmentTime.toNumber());
+    setPrice(_price.toBigInt());
+
+    await updateSteps();
+  }
+
   //Global State
-  const [_r, setReRender] = useState(false); //Only used to rerender
-  const rerenderRef = useRef();
+  const [_r, setReRender] = useState<boolean>(false); //Only used to rerender
+  const rerenderRef = useRef<boolean>();
   rerenderRef.current = _r;
 
-  const [activeStep, setActiveStep] = useState(0);
-  const [waitingForTx, setWaitingForTx] = useState(false);
-  const [registerTx, setRegisterTx] = useState(null);
+  const [activeStep, setActiveStep] = useState<number>(0);
 
-  const isSupportedChain = isSupported(chainId);
-  const commitmentHash =
-    name != null && address != null
-      ? commitment(BigInt(namehash(name)), address, duration, secret)
-      : null;
+  const [waitingForTx, setWaitingForTx] = useState<boolean>(false);
+  const [registerTx, setRegisterTx] = useState<string | null>(null);
 
   //Step State
-  const [price, setPrice] = useState(null);
+  const [price, setPrice] = useState<bigint | null>(null);
 
-  const [approvedBalance, setApprovedBalance] = useState(false);
-  const isApproved = price != null && approvedBalance >= price;
-  const [balance, setBalance] = useState(false);
-  const hasBalance = price != null && balance >= price;
+  const [approvedBalance, setApprovedBalance] = useState<bigint | null>(null);
+  const isApproved = price != null && approvedBalance != null && approvedBalance >= price;
+  const [balance, setBalance] = useState<bigint | null>(null);
+  const hasBalance = price != null && balance != null && balance >= price;
 
-  const [commitmentTime, setCommitmentTime] = useState(null);
+  const [commitmentTime, setCommitmentTime] = useState<number | null>(null);
   const hasCommitment =
     commitmentTime != null && commitmentTime + maxCommitmentAge > new Date().getTime() / 1000;
   const waitProgress = Math.min(
     100,
-    (100 * (new Date().getTime() / 1000 - commitmentTime)) / minCommitmentAge
+    (100 * (new Date().getTime() / 1000 - (commitmentTime === null ? 0 : commitmentTime))) / minCommitmentAge
   );
   const waitCompleted =
     commitmentTime != null && commitmentTime + minCommitmentAge < new Date().getTime() / 1000 && hasCommitment;
+
+  const initialized = price != null && approvedBalance != null && balance != null;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,50 +87,26 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
 
   useEffect(() => {
     updateSteps();
-  }, [isConnected, chainId, address, activeStep, approvedBalance, balance, commitmentTime]);
+  }, [activeStep, approvedBalance, balance, commitmentTime]);
 
   useEffect(() => {
-    loadInitialValues();
+    loadStatusFromChain();
   }, [chainId, address]);
 
-  async function loadInitialValues() {
-    if (!isConnected || !isSupported(chainId)) {
-      setPrice(null);
-      setApprovedBalance(0);
-      setBalance(0);
-      setCommitmentTime(null);
-      await updateSteps();
-      return;
-    }
-
-    const _approvedBalance = BigInt(await paymentToken.allowance(address, paymentProvider.address));
-    const _balance = BigInt(await paymentToken.balanceOf(address));
-    const _commitmentTime = Number(await controller.getCommitment(commitmentHash));
-    const _price = BigInt(await paymentProvider.getPrice(name, 0, duration));
-
-    setApprovedBalance(_approvedBalance);
-    setBalance(_balance);
-    setCommitmentTime(_commitmentTime);
-    setPrice(_price);
-    await updateSteps();
-  }
-
+  
   async function updateSteps() {
-    var step = 4;
+    var step = 3;
 
     if (!waitCompleted) {
-      step = 3;
-    }
-    if (!hasCommitment) {
       step = 2;
     }
-    if (!isApproved || !hasBalance) {
+    if (!hasCommitment) {
       step = 1;
     }
-    if (!isConnected || !isSupportedChain) {
+
+    if (!isApproved || !hasBalance) {
       step = 0;
     }
-
     if (step != activeStep) {
       setActiveStep(step);
     }
@@ -121,8 +120,8 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     setWaitingForTx(true);
 
     try {
-      const receipt = await paymentToken.approve(
-        paymentProvider.address,
+      const receipt = await paymentToken!.approve(
+        paymentProvider!.address,
         100000000000000000000000000000n
       );
       const result = await receipt.wait();
@@ -146,7 +145,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     setWaitingForTx(true);
 
     try {
-      const receipt = await controller.commit(commitmentHash);
+      const receipt = await controller!.commit(commitmentHash);
       const result = await receipt.wait();
 
       if (result.status != 1) {
@@ -168,8 +167,8 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     setWaitingForTx(true);
 
     try {
-      const receipt = await controller.register(name, address, duration, secret, {
-        value: BigInt(bridgeFee),
+      const receipt = await controller!.register(name, address!, duration, secret, {
+        value: BigNumber.from(bridgeFee),
       });
       const result = await receipt.wait();
 
@@ -180,7 +179,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
 
       ResetSecret();
 
-      if (chainId === mainChainId) {
+      if (isMainChain) {
         location.reload();
         return;
       }
@@ -191,18 +190,12 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
     }
   }
 
+  if (!initialized) {
+    return (<p>Loading...</p>);
+  }
+
   return (
     <Stepper activeStep={activeStep} orientation="vertical">
-      <Step>
-        <StepLabel>
-          <Typography variant="caption">Connect your Wallet to a supported Chain</Typography>
-        </StepLabel>
-        <StepContent>
-          {!isConnected && <Typography>Wallet not connected!</Typography>}
-          {isConnected && !isSupportedChain && <Typography>Unsupported Chain!</Typography>}
-        </StepContent>
-      </Step>
-
       <Step>
         <StepLabel>
           <Typography variant="caption">Approve Farsight for USDC</Typography>
@@ -269,7 +262,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }) => {
             Claim
           </Button>
 
-          {chainId !== mainChainId && (
+          {!isMainChain && (
             <Button
               sx={{ m: 2 }}
               disabled={registerTx == null}

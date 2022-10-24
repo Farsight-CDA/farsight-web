@@ -10,7 +10,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const Page = () => {
   const router = useRouter();
-  const { name } = router.query;
+  const name = router.query.name as string | undefined;
 
   if (name !== undefined) {
     if (name.replace(/[^a-zA-Z0-9]/, '') != name) {
@@ -41,7 +41,12 @@ const Page = () => {
   );
 };
 
-const InnerPage = ({ name }) => {
+
+interface InnerNamePageProps {
+  name: string;
+}
+
+const InnerPage = ({ name }: InnerNamePageProps) => {
   const { data, status } = useQuery(["registration", name], () => fetchRegistration(name));
 
   return (
@@ -90,6 +95,6 @@ const InnerPage = ({ name }) => {
   );
 };
 
-Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
