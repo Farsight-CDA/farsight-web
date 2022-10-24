@@ -73,13 +73,9 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
         <Grid xs={12}>
           <Card>
             <CardContent>
-              <Grid container direction={"row"}>
-                <Grid xs={6}>
-                  <Typography align="left" color="textPrimary" gutterBottom variant="h5">
-                    {name}.far
-                  </Typography>
-                </Grid>
-              </Grid>
+              <Typography align="left" color="textPrimary" gutterBottom variant="h5">
+                {name}.far
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
