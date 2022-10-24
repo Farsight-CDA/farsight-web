@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { Box, CircularProgress, Container, Grid, Typography } from "@mui/material";
-import { DashboardLayout } from "../../components/dashboard-layout";
+import { Layout } from "../../components/layout/layout";
 import { WatchCard } from "../../components/watch/watch-card";
 import { RegisterCard } from "../../components/register/register-card";
 import { useQuery } from "react-query";
@@ -13,8 +13,8 @@ const Page = () => {
   const name = router.query.name as string | undefined;
 
   if (name !== undefined) {
-    if (name.replace(/[^a-zA-Z0-9]/, '') != name) {
-      router.replace("/register/" + name.replace(/[^a-zA-Z0-9]/, ''));
+    if (name.replace(/[^a-zA-Z0-9]/, "") != name) {
+      router.replace("/register/" + name.replace(/[^a-zA-Z0-9]/, ""));
     }
     if (name.length < 4 || name.length > 32) {
       router.replace("/register");
@@ -35,12 +35,11 @@ const Page = () => {
           <CircularProgress />
         </Grid>
       ) : (
-          <InnerPage name={name.toLowerCase()}></InnerPage>
+        <InnerPage name={name.toLowerCase()}></InnerPage>
       )}
     </>
   );
 };
-
 
 interface InnerNamePageProps {
   name: string;
@@ -95,6 +94,6 @@ const InnerPage = ({ name }: InnerNamePageProps) => {
   );
 };
 
-Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
+Page.getLayout = (page: any) => <Layout>{page}</Layout>;
 
 export default Page;

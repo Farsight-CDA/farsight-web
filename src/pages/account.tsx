@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Box, Container, Grid, Typography } from "@mui/material";
-import { DashboardLayout } from "../components/dashboard-layout";
+import { Layout } from "../components/layout/layout";
 
 const Page = () => {
   return (
@@ -40,6 +40,6 @@ const Page = () => {
   );
 };
 
-Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
+Page.getLayout = (page: any) => <Layout>{page}</Layout>;
 
 export default Page;

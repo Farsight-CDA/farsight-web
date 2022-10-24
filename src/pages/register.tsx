@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Search as SearchIcon } from "../icons/search";
-import { DashboardLayout } from "../components/dashboard-layout";
+import { Layout } from "../components/layout/layout";
 import * as React from "react";
 
 const Page = () => {
@@ -119,6 +119,6 @@ const Page = () => {
     </>
   );
 };
-Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
+Page.getLayout = (page: any) => <Layout>{page}</Layout>;
 
 export default Page;
