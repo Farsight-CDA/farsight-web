@@ -18,15 +18,16 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import LockIcon from "@mui/icons-material/Lock";
 import { mainChainId } from "../../utils/chain-ids";
-import { ChainState } from "../../utils/HinterEnde";
+import { ChainState, Registration } from "../../utils/HinterEnde";
+import { BridgeNFTModal } from "./modals/bridge-nft-modal";
 
 interface ChainContentProps {
+  registration: Registration;
   canEdit: boolean;
   chainState: ChainState;
-  chainStates: ChainState[];
 }
 
-export const ChainContent = ({ chainState, chainStates, canEdit }: ChainContentProps) => {
+export const ChainContent = ({ registration, chainState, canEdit }: ChainContentProps) => {
   const { chainId: connectedChainId, address } = useContext(AuthContext);
 
   //modal
@@ -116,39 +117,7 @@ export const ChainContent = ({ chainState, chainStates, canEdit }: ChainContentP
                   aria-describedby="modal-modal-description"
                   style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
-                  <Box maxWidth={"75%"}>
-                    <Card style={{ maxWidth: "4" }}>
-                      <CardContent>
-                        <Typography color="textPrimary" gutterBottom variant="h6" mb={4}>
-                          Here you can send your NFT to other Chain
-                        </Typography>
-                        <RadioGroup
-                          aria-labelledby="demo-radio-buttons-group-label"
-                          defaultValue="female"
-                          name="radio-buttons-group"
-                        >
-                          {chainStates.map((state) => (
-                            <FormControlLabel
-                              key={state.chainId}
-                              value={state.chainId}
-                              control={<Radio />}
-                              label={getChainNameByChainId(state.chainId)}
-                            />
-                          ))}
-                        </RadioGroup>
-                        {canEdit && <span>
-                          <Button
-                            sx={{ mt: 2 }}
-                            disabled={chainId !== connectedChainId}
-                            variant="contained"
-                            onClick={() => { changeToMainChain(); handleClose2(); }}
-                          >
-                            Confirm
-                          </Button>
-                        </span>}
-                      </CardContent>
-                    </Card>
-                  </Box>
+                  <BridgeNFTModal registration={registration}></BridgeNFTModal>
                 </Modal>
               </Grid>
               <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -178,55 +147,7 @@ export const ChainContent = ({ chainState, chainStates, canEdit }: ChainContentP
                   aria-describedby="modal-modal-description"
                   style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
-                  <Box maxWidth={"75%"}>
-                    <Card style={{ maxWidth: "4" }}>
-                      <CardContent>
-                        <Grid container spacing={1}>
-                          <Grid
-                            xs={12}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <Typography color="textPrimary" gutterBottom variant="h6" mb={4}>
-                              Hear you can change your LocalOwner for{" "}
-                              {getChainNameByChainId(chainId)}
-                            </Typography>
-                          </Grid>
-                          <Grid
-                            xs={12}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <TextField defaultValue={localOwner} />
-                          </Grid>
-                          <Grid
-                            xs={12}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            {canEdit && <span>
-                              <Button
-                                disabled={chainId !== connectedChainId}
-                                variant="contained"
-                                onClick={() => { changeLocalOwner(); handleClose1(); }}
-                              >
-                                Confirm
-                              </Button>
-                            </span>}
-                          </Grid>
-                        </Grid>
-                      </CardContent>
-                    </Card>
-                  </Box>
+                  <p>Placeholder</p>
                 </Modal>
               </Grid>
             </>
