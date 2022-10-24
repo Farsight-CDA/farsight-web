@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import styled from "@emotion/styled";
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }: any) => ({
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor: theme.palette.primary.main,
   boxShadow: theme.shadows[3],
 }));
 
@@ -133,7 +133,7 @@ export const Navbar = (props: NavbarProps) => {
             alignItems="flex-end"
           >
             <p>{isConnected}</p>
-            <Button onClick={toggleConnection}>
+            <Button onClick={toggleConnection} style={{ backgroundColor: {} }}>
               {isConnected ? "Disconnect Wallet" : "Connect Wallet"}
             </Button>
           </Box>
