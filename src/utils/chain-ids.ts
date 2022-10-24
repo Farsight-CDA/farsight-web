@@ -10,9 +10,11 @@ const mainnetChainIds = [
 ];
 
 export const fantomTestnetChainId = 4002;
+export const polygonTestnetChainId = 80001;
 
 const testnetChainIds = [
-  fantomTestnetChainId
+  fantomTestnetChainId,
+  polygonTestnetChainId
 ];
 
 export const mainChainId = environment == Environment.MAINNET

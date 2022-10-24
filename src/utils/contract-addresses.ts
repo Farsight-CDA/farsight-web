@@ -1,4 +1,4 @@
-import { polygonChainId, fantomChainId, fantomTestnetChainId } from "./chain-ids";
+import { polygonChainId, fantomChainId, fantomTestnetChainId, polygonTestnetChainId } from "./chain-ids";
 
 export function getRegistrarAddress(chainId: number) {
   switch (chainId) {
@@ -10,6 +10,8 @@ export function getRegistrarAddress(chainId: number) {
     //Testnet
     case fantomTestnetChainId:
       return "0xc9d871542fdA15F320CA63E6Fd349a9aF083E39b";
+    case polygonTestnetChainId:
+      return "0x77cE98780218C08bE8d4b7dCbdAfEEA4C438d729";
     default:
       return null;
   }
@@ -25,6 +27,8 @@ export function getControllerAddress(chainId: number) {
     //Testnet
     case fantomTestnetChainId:
       return "0x21d49d1f71127b4EBb4d7C09CA9417376A202396";
+    case polygonTestnetChainId:
+      return "0x2447bAb93E0e6DF71C10557A5f8846beFEbA966e";
     default:
       return null;
   }

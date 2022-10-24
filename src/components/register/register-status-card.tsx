@@ -6,6 +6,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { environment } from "../../utils/environment";
 import { Environment } from "@axelar-network/axelarjs-sdk";
 import { BigNumber } from "ethers";
+import { AxelarContext } from "../../contexts/axelar-context";
 
 const minCommitmentAge = environment == Environment.DEVNET ? 30 : 180;
 const maxCommitmentAge = 3600;
@@ -29,6 +30,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }: RegisterStatus
     isMainChain,
     ResetSecret
   } = useContext(AuthContext);
+  const { getTransactionExplorerURL } = useContext(AxelarContext);
 
   const commitmentHash = commitment(BigInt(namehash(name)), address!, duration, secret);
   
@@ -266,7 +268,7 @@ export const RegisterStatusCard = ({ name, duration, bridgeFee }: RegisterStatus
             <Button
               sx={{ m: 2 }}
               disabled={registerTx == null}
-              onClick={() => window.open("https://axelarscan.io/gmp/" + registerTx, "_blank")}
+              onClick={() => window.open(getTransactionExplorerURL(registerTx == null ? "" : registerTx), "_blank")}
               variant="contained"
             >
               View on AxelarScan

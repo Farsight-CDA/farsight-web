@@ -3,7 +3,8 @@ import { Button, Card, CardContent, FormControl, FormControlLabel, Grid, Input, 
 import { Box } from "@mui/system";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../contexts/auth-context";
-import { getChainNameByChainId, getEVMChainByChainId } from "../../../utils/ChainTranslation";
+import { AxelarContext } from "../../../contexts/axelar-context";
+import { getBridgeTargetNameByChainId, getChainNameByChainId, getEVMChainByChainId } from "../../../utils/ChainTranslation";
 import { namehash } from "../../../utils/hash";
 import { Registration } from "../../../utils/HinterEnde";
 
@@ -15,6 +16,7 @@ export interface BridgeNFTModalProps {
 
 export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTModalProps) => {
     const { chainId, registrar } = useContext(AuthContext);
+    const { getTransactionExplorerURL } = useContext(AxelarContext);
 
     const [activeStep, setActiveStep] = useState<number>(0);
     
@@ -54,7 +56,7 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
             return;
         }
 
-        const selectedChain = getEVMChainByChainId(targetChainId);
+        const selectedChain = getBridgeTargetNameByChainId(targetChainId);
 
         const receipt = await registrar!.bridgeNameTo(
             selectedChain, 
@@ -150,7 +152,7 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
                             <Button
                                 sx={{ m: 2 }}
                                 disabled={bridgeTx === null}
-                                onClick={() => window.open("https://axelarscan.io/gmp/" + bridgeTx, "_blank")}
+                                onClick={() => window.open(getTransactionExplorerURL(bridgeTx == null ? "" : bridgeTx), "_blank")}
                                 variant="contained"
                             >
                                 View on AxelarScan
