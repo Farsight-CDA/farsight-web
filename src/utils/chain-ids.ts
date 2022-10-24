@@ -19,13 +19,10 @@ export const mainChainId = environment == Environment.MAINNET
                             ? polygonChainId
                             : fantomTestnetChainId;
 
-export function isSupportedChainId(chainId: number) {
-  if (environment == Environment.MAINNET){
-    return mainnetChainIds.includes(chainId);
-  }
-  if (environment == Environment.TESTNET) {
-    return testnetChainIds.includes(chainId);
-  }
+export const supportedChains = environment == Environment.MAINNET
+  ? mainnetChainIds
+  : testnetChainIds;
 
-  return false;
+export function isSupportedChainId(chainId: number) {
+  return supportedChains.includes(chainId);
 }

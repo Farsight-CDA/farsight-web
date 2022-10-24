@@ -26,8 +26,8 @@ import { useQuery } from "react-query";
 import { fetchEstimateRegisterGas, fetchPriceData } from "../../utils/HinterEnde";
 import { namehash } from "../../utils/hash";
 import { AxelarContext } from "../../contexts/axelar-context";
-import { getEVMChainByChainId, getNativeAssetByChainId } from "../../utils/ChainTranslation";
-import { mainChainId } from "../../utils/chain-ids";
+import { getChainNameByChainId, getEVMChainByChainId, getNativeAssetByChainId } from "../../utils/ChainTranslation";
+import { mainChainId, supportedChains } from "../../utils/chain-ids";
 import { BigNumber } from "ethers";
 
 interface RegisterCardProps {
@@ -240,7 +240,7 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
                   </p>}
                 {(isConnected && !isSupported && gasFeeStatus == 'success') && <p>
                     Unsupported Chain!
-                    Please connect to Polygon or Fantom!
+                    Please connect to {supportedChains.map(cId => getChainNameByChainId(cId)).join(" or ")}
                   </p>}
                 {gasFeeStatus == 'loading' && <p>Loading...</p>}
                 {gasFeeStatus == 'error' && <p>Failed loading Axelar data. Try again later!</p>}
