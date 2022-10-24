@@ -5,7 +5,7 @@ import { Box, Button, ListItem } from '@mui/material';
 
 interface NavItemProps {
   href: string;
-  icon: string;
+  icon: JSX.Element;
   title: string;
 }
 
