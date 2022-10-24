@@ -21,11 +21,6 @@ export interface BridgeNFTModalProps {
 export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTModalProps) => {
     const { chainId, balance, address, registrar, isSupported } = useContext(AuthContext);
 
-    if (!isSupported || chainId !== keeperChainId ||
-        chainId === null /* TS Hint */ || registrar === null /* TS Hint */ || balance === null /* TS Hint */) {
-        return (<></>);
-    }
-
     const { axelarClient, getTransactionExplorerURL } = useContext(AxelarContext);
     
     const [selectedChainId, setSelectedChainId] = useState<string>("");
@@ -116,6 +111,11 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
         }
 
         setBridgeTx(receipt.hash);
+    }
+
+    if (!isSupported || chainId !== keeperChainId ||
+        chainId === null /* TS Hint */ || registrar === null /* TS Hint */ || balance === null /* TS Hint */) {
+        return (<></>);
     }
 
     return (
