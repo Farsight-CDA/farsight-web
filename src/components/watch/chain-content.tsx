@@ -24,11 +24,13 @@ import { BridgeNFTModal } from "./modals/bridge-nft-modal";
 
 interface ChainContentProps {
   registration: Registration;
+  keeperChainId: number | null;
   canEdit: boolean;
   chainState: ChainState;
+  name: string;
 }
 
-export const ChainContent = ({ registration, chainState, canEdit }: ChainContentProps) => {
+export const ChainContent = ({ registration, keeperChainId, chainState, canEdit, name }: ChainContentProps) => {
   const { chainId: connectedChainId, address } = useContext(AuthContext);
 
   //modal
@@ -111,15 +113,15 @@ export const ChainContent = ({ registration, chainState, canEdit }: ChainContent
                     </Button>
                   </span>
                 </Tooltip>}
-                <Dialog
+                {keeperChainId !== null && <Dialog
                   open={open2}
                   onClose={handleClose2}
                   aria-labelledby="modal-modal-title"
                   aria-describedby="modal-modal-description"
                   style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
-                  <BridgeNFTModal registration={registration}></BridgeNFTModal>
-                </Dialog>
+                  <BridgeNFTModal registration={registration} name={name} keeperChainId={keeperChainId}></BridgeNFTModal>
+                </Dialog>}
               </Grid>
               <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                 {canEdit &&<Tooltip

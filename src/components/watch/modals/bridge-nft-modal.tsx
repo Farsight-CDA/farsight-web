@@ -1,16 +1,20 @@
+import { EvmChain } from "@axelar-network/axelarjs-sdk";
 import { Button, Card, CardContent, FormControl, FormControlLabel, Grid, Input, InputAdornment, InputLabel, Radio, RadioGroup, Step, StepContent, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../contexts/auth-context";
-import { getChainNameByChainId } from "../../../utils/ChainTranslation";
+import { getChainNameByChainId, getEVMChainByChainId } from "../../../utils/ChainTranslation";
+import { namehash } from "../../../utils/hash";
 import { Registration } from "../../../utils/HinterEnde";
 
 export interface BridgeNFTModalProps {
+    keeperChainId: number;
     registration: Registration;
+    name: string;
 }
 
-export const BridgeNFTModal = ({ registration }: BridgeNFTModalProps) => {
-    const { isMainChain, chainId, registrar } = useContext(AuthContext);
+export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTModalProps) => {
+    const { chainId, registrar } = useContext(AuthContext);
 
     const [activeStep, setActiveStep] = useState<number>(0);
     
@@ -18,9 +22,12 @@ export const BridgeNFTModal = ({ registration }: BridgeNFTModalProps) => {
     const [targetChainId, setTargetChainId] = useState<number | null>(null);
 
     const [selectedAddress, setSelectedAddress] = useState<string>("");
-    const [targetAddress, setTargetAddress] = useState<string>("");
+    const [targetAddress, setTargetAddress] = useState<string | null>(null);
 
-    if (!isMainChain || chainId === null /* TS Hint */ || registrar === null /* TS Hint */) {
+    const [bridgeTx, setBridgeTx] = useState<string | null>(null);
+
+
+    if (chainId !== keeperChainId || chainId === null /* TS Hint */ || registrar === null /* TS Hint */) {
         return (<></>);
     }
 
@@ -42,9 +49,30 @@ export const BridgeNFTModal = ({ registration }: BridgeNFTModalProps) => {
         setActiveStep(2);
     }
 
-    function postBridgeTransaction(){
-        
+    async function postBridgeTransaction(){
+        if (targetChainId === null || targetAddress === null){
+            return;
+        }
+
+        const selectedChain = getEVMChainByChainId(targetChainId);
+
+        const receipt = await registrar!.bridgeNameTo(
+            selectedChain, 
+            namehash(name),
+            targetAddress    
+        );
+
+        const result = await receipt.wait();
+
+        if (result.status != 1) {
+            alert("There was an error, please try again!");
+            return;
+        }
+
+        setBridgeTx(receipt.hash);
     }
+
+
 
     return (
         <Card style={{ maxWidth: "4" }}>
@@ -111,7 +139,22 @@ export const BridgeNFTModal = ({ registration }: BridgeNFTModalProps) => {
                             Post Transaction
                         </StepLabel>
                         <StepContent>
-
+                            <Button
+                                disabled={selectedAddress === ""}
+                                variant="contained"
+                                color="secondary"
+                                onClick={postBridgeTransaction}
+                            >
+                                Submit
+                            </Button>     
+                            <Button
+                                sx={{ m: 2 }}
+                                disabled={bridgeTx === null}
+                                onClick={() => window.open("https://axelarscan.io/gmp/" + bridgeTx, "_blank")}
+                                variant="contained"
+                            >
+                                View on AxelarScan
+                            </Button>
                         </StepContent>
                     </Step>
                 </Stepper>

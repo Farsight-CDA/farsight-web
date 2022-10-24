@@ -51,6 +51,8 @@ export const WatchCard = ({ name, registration }: WatchCardProps) => {
             registration={registration}
             chainState={keeperChain}
             canEdit={canEdit}
+            name={name}
+            keeperChainId={keeperChain?.chainId}
           />}
         </Grid>
         <Grid xs={12} sx={{ mt: 3 }}>
@@ -71,7 +73,13 @@ export const WatchCard = ({ name, registration }: WatchCardProps) => {
             .filter((x) => !x.isKeeper)
             .map((state) => (
               <Grid key={state.chainId} xs={6}>
-                <ChainContent registration={registration} chainState={state} canEdit={canEdit}/>
+                <ChainContent 
+                  registration={registration} 
+                  chainState={state} 
+                  canEdit={canEdit}
+                  name={name}
+                  keeperChainId={keeperChain === null ? null : keeperChain.chainId}
+                />
               </Grid>
             ))}
         </Grid>
