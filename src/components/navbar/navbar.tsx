@@ -16,21 +16,17 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { AuthContext } from "../../contexts/auth-context";
 import { useRouter } from "next/router";
-import styled from "@emotion/styled";
-
-const DashboardNavbarRoot = styled(AppBar)(({ theme }: any) => ({
-  backgroundColor: theme.palette.primary.main,
-  boxShadow: theme.shadows[3],
-}));
+import { useTheme } from "@mui/system";
 
 interface NavbarProps {
   onSidebarOpen: () => void;
 }
 
 export const Navbar = (props: NavbarProps) => {
+  const themeeeee = useTheme();
   const { isConnected, toggleConnection, address, chainId } = useContext(AuthContext);
 
-  const { onSidebarOpen, ...other } = props;
+  const { onSidebarOpen } = props;
 
   const [name, setName] = useState("");
   const [validName, setValidName] = useState(false);
@@ -59,87 +55,71 @@ export const Navbar = (props: NavbarProps) => {
   };
 
   return (
-    <>
-      <DashboardNavbarRoot
-        sx={{
-          left: {
-            pc: 280,
-          },
-          width: {
-            pc: "calc(100% - 280px)",
-          },
-        }}
-        {...other}
-      >
-        <Toolbar
-          disableGutters
+    <AppBar position="sticky">
+      <Toolbar disableGutters>
+        <IconButton
+          onClick={onSidebarOpen}
           sx={{
-            minHeight: 64,
-            left: 0,
-            px: 2,
+            display: {
+              mobile: "inline-flex",
+              pc: "none",
+            },
           }}
         >
-          <IconButton
-            onClick={onSidebarOpen}
-            sx={{
-              display: {
-                mobile: "inline-flex",
-                pc: "none",
-              },
+          <MenuIcon fontSize="small" />
+        </IconButton>
+        <Box sx={{ maxWidth: 500, ml: 2 }}>
+          <TextField
+            value={name}
+            onChange={(x) => handleInput(x.target.value)}
+            onKeyDown={handleKeyDown}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SvgIcon fontSize="small" color="action">
+                    <SearchIcon />
+                  </SvgIcon>
+                </InputAdornment>
+              ),
             }}
-          >
-            <MenuIcon fontSize="small" />
-          </IconButton>
-          <Box sx={{ maxWidth: 500, ml: 2 }}>
-            <TextField
-              value={name}
-              onChange={(x) => handleInput(x.target.value)}
-              onKeyDown={handleKeyDown}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SvgIcon fontSize="small" color="action">
-                      <SearchIcon />
-                    </SvgIcon>
-                  </InputAdornment>
-                ),
-              }}
-              placeholder="Search on-chain name"
-              variant="standard"
-            />
-            {!validName && showError && name !== "" && (
-              <Typography style={{ textAlign: "center", color: "red", marginTop: "8px" }}>
-                {name.length < 4 && <>Minimum 4 characters</>}
-                {name.length > 32 && <>At most 32 characters</>}
-              </Typography>
-            )}
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          {address !== null ? (
-            <Tooltip title={address} arrow>
-              <Typography color="text.secondary" variant="body2">
-                {address.substring(0, 7) +
-                  (address.length < 5 ? "" : "...") +
-                  address.substring(35, 80)}
-              </Typography>
-            </Tooltip>
-          ) : (
-            <></>
+            placeholder="Search on-chain name"
+            variant="standard"
+          />
+          {!validName && showError && name !== "" && (
+            <Typography style={{ textAlign: "center", color: "red", marginTop: "8px" }}>
+              {name.length < 4 && <>Minimum 4 characters</>}
+              {name.length > 32 && <>At most 32 characters</>}
+            </Typography>
           )}
-          <Box
-            style={{ minWidth: "180px" }}
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="flex-end"
+        </Box>
+        <Box sx={{ flexGrow: 1 }} />
+        {address !== null ? (
+          <Tooltip title={address} arrow>
+            <Typography color="text.secondary" variant="body2">
+              {address.substring(0, 7) +
+                (address.length < 5 ? "" : "...") +
+                address.substring(35, 80)}
+            </Typography>
+          </Tooltip>
+        ) : (
+          <></>
+        )}
+        <Box
+          style={{ minWidth: "180px" }}
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="flex-end"
+        >
+          <p>{isConnected}</p>
+          <Button
+            onClick={toggleConnection}
+            style={{ backgroundColor: "{theme.palette.primary.main}" }}
           >
-            <p>{isConnected}</p>
-            <Button onClick={toggleConnection} style={{ backgroundColor: {} }}>
-              {isConnected ? "Disconnect Wallet" : "Connect Wallet"}
-            </Button>
-          </Box>
-        </Toolbar>
-      </DashboardNavbarRoot>
-    </>
+            {isConnected ? "Disconnect Wallet" : "Connect Wallet"}
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
