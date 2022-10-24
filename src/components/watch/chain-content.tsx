@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardContent,
+  Dialog,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -110,7 +111,7 @@ export const ChainContent = ({ registration, chainState, canEdit }: ChainContent
                     </Button>
                   </span>
                 </Tooltip>}
-                <Modal
+                <Dialog
                   open={open2}
                   onClose={handleClose2}
                   aria-labelledby="modal-modal-title"
@@ -118,7 +119,7 @@ export const ChainContent = ({ registration, chainState, canEdit }: ChainContent
                   style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
                   <BridgeNFTModal registration={registration}></BridgeNFTModal>
-                </Modal>
+                </Dialog>
               </Grid>
               <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                 {canEdit &&<Tooltip
@@ -140,15 +141,15 @@ export const ChainContent = ({ registration, chainState, canEdit }: ChainContent
                     </Button>
                   </span>
                 </Tooltip>}
-                <Modal
+                <Dialog
                   open={open1}
                   onClose={handleClose1}
                   aria-labelledby="modal-modal-title"
                   aria-describedby="modal-modal-description"
                   style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
-                  <p>Placeholder</p>
-                </Modal>
+                  <span></span>
+                </Dialog>
               </Grid>
             </>
           )}
