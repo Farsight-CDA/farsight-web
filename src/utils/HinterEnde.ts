@@ -1,6 +1,12 @@
+import { bool } from "yup";
 import { namehash } from "./hash";
 
-export const fetchPriceData = async (name, expiry, duration) => {
+export interface PriceData {
+  token: string;
+  amount: Number;
+}
+
+export async function fetchPriceData(name: string, expiry: number, duration: number): Promise<PriceData> {
   const response = await fetch("/api/getPrice", {
     method: "POST",
     body: JSON.stringify({
@@ -20,7 +26,20 @@ export const fetchPriceData = async (name, expiry, duration) => {
   };
 };
 
-export const fetchRegistration = async (name) => {
+export interface Registration {
+  available: boolean;
+  chainStates: ChainState[];
+}
+export interface ChainState {
+  chainId: number;
+  localOwner: string;
+  expiration: number;
+  isKeeper: boolean;
+  ownerChangeVersion: number;
+  registrationVersion: number;
+}
+
+export async function fetchRegistration(name: string): Promise<Registration> {
   const response = await fetch("/api/getRegistration", {
     method: "POST",
     body: JSON.stringify({
@@ -34,7 +53,7 @@ export const fetchRegistration = async (name) => {
   const result = await response.json();
   return {
     available: result.available,
-    chainStates: result.chain_states.map(state => {
+    chainStates: result.chain_states.map((state: any) => {
       return {
         chainId: Number(state.chainId),
         localOwner: state.owner,
@@ -47,7 +66,7 @@ export const fetchRegistration = async (name) => {
   };
 };
 
-export const fetchPlainName = async (name) => {
+export async function fetchPlainName(name: string): Promise<string> {
   const response = await fetch("/api/getPlainName", {
     method: "POST",
     body: JSON.stringify({
@@ -61,13 +80,13 @@ export const fetchPlainName = async (name) => {
   return await response.json();
 };
 
-export const fetchEstimateRenewGuess = async (chain_id, name, reg_version, duration) => {
+export async function fetchEstimateRenewGuess(chainId: number, name: string, registrationVersion: number, duration: number) {
   const response = await fetch("/api/estimateRenewGas", {
     method: "POST",
     body: JSON.stringify({
-      chain_id: chain_id,
+      chain_id: chainId,
       name: name,
-      reg_version: reg_version,
+      reg_version: registrationVersion,
       duration: BigInt(duration).toString(16),
     }),
     headers: {
@@ -78,13 +97,13 @@ export const fetchEstimateRenewGuess = async (chain_id, name, reg_version, durat
   return await response.json();
 };
 
-export const fetchEstimateRegisterGas = async (chain_id, plain_name, name, owner, duration) => {
+export async function fetchEstimateRegisterGas(chainId: number, name: string, owner: string, duration: number) {
   const response = await fetch("/api/estimateRegisterGas", {
     method: "POST",
     body: JSON.stringify({
-      chain_id: chain_id,
-      plain_name: plain_name,
-      name: name,
+      chain_id: chainId,
+      plain_name: name,
+      name: namehash(name),
       owner: owner,
       duration: BigInt(duration).toString(16),
     }),

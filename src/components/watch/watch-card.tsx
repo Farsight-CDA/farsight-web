@@ -1,13 +1,19 @@
-import PropTypes from "prop-types";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import { Box, Card, CardContent, Divider } from "@mui/material";
+import { Card } from "@mui/material";
 import * as React from "react";
 import { ChainContent } from "./chain-content";
 import { Typography } from "@mui/material";
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/auth-context";
+import { Registration } from "../../utils/HinterEnde";
+import { NoKeeperChainHint } from "./no-keeper-chain";
 
-export const WatchCard = ({ name, registration }) => {
+interface WatchCardProps {
+  name: string;
+  registration: Registration;
+}
+
+export const WatchCard = ({ name, registration }: WatchCardProps) => {
   const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
     registration.chainStates[0];
   const { address } = useContext(AuthContext);
@@ -40,12 +46,12 @@ export const WatchCard = ({ name, registration }) => {
           </Card>
         </Grid>
         <Grid xs={12} sx={{ ml: 2, mr: 2 }}>
-          <ChainContent
+          {keeperChain === null && <NoKeeperChainHint></NoKeeperChainHint>}
+          {keeperChain !== null && <ChainContent
             chainStates={registration.chainStates}
             chainState={keeperChain}
-            owner={keeperChain?.localOwner}
             canEdit={canEdit}
-          />
+          />}
         </Grid>
         <Grid xs={12} sx={{ mt: 3 }}>
           <Card style={{ marginBottom: "5px" }}>
@@ -65,7 +71,7 @@ export const WatchCard = ({ name, registration }) => {
             .filter((x) => !x.isKeeper)
             .map((state) => (
               <Grid key={state.chainId} xs={6}>
-                <ChainContent chainStates={registration.chainStates} chainState={state} owner={keeperChain?.localOwner} canEdit={canEdit}/>
+                <ChainContent chainStates={registration.chainStates} chainState={state} canEdit={canEdit}/>
               </Grid>
             ))}
         </Grid>

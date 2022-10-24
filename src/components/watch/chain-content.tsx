@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import {
   Button,
   Card,
@@ -17,11 +16,17 @@ import { getChainNameByChainId, getLogoNameByChainId } from "../../utils/ChainTr
 import { AuthContext } from "../../contexts/auth-context";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { NoKeeperChainHint } from "./no-keeper-chain";
 import LockIcon from "@mui/icons-material/Lock";
 import { mainChainId } from "../../utils/chain-ids";
+import { ChainState } from "../../utils/HinterEnde";
 
-export const ChainContent = ({ chainState, chainStates, canEdit }) => {
+interface ChainContentProps {
+  canEdit: boolean;
+  chainState: ChainState;
+  chainStates: ChainState[];
+}
+
+export const ChainContent = ({ chainState, chainStates, canEdit }: ChainContentProps) => {
   const { chainId: connectedChainId, address } = useContext(AuthContext);
 
   //modal
@@ -37,10 +42,6 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
   const changeLocalOwner = () => {}; //ToDo: machmal
   const changeToMainChain = () => {}; //ToDo: machmal
   const setValue = () => {}; //ToDo: machmal
-
-  if (chainState === null) {
-    return <NoKeeperChainHint></NoKeeperChainHint>;
-  }
 
   const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
     chainState;
@@ -72,7 +73,7 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
           </Grid>
           <Grid xs={12} />
           {!isExpired && (
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Box>
                 <Typography color="textPrimary" gutterBottom variant="h5">
                   LocalOwner: {localOwner.slice(0, 7) + "..." + localOwner.slice(21, 28)}
@@ -102,7 +103,7 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
                     <Button
                       disabled={chainId !== connectedChainId}
                       variant="contained"
-                      onClick={setOpen2}
+                      onClick={() => setOpen2(true)}
                     >
                       Cross Chain Transfer
                     </Button>
@@ -140,7 +141,7 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
                             sx={{ mt: 2 }}
                             disabled={chainId !== connectedChainId}
                             variant="contained"
-                            onClick={changeToMainChain && handleClose2}
+                            onClick={() => { changeToMainChain(); handleClose2(); }}
                           >
                             Confirm
                           </Button>
@@ -182,7 +183,6 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
                       <CardContent>
                         <Grid container spacing={1}>
                           <Grid
-                            item
                             xs={12}
                             style={{
                               display: "flex",
@@ -196,7 +196,6 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
                             </Typography>
                           </Grid>
                           <Grid
-                            item
                             xs={12}
                             style={{
                               display: "flex",
@@ -207,7 +206,6 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
                             <TextField defaultValue={localOwner} />
                           </Grid>
                           <Grid
-                            item
                             xs={12}
                             style={{
                               display: "flex",
@@ -219,7 +217,7 @@ export const ChainContent = ({ chainState, chainStates, canEdit }) => {
                               <Button
                                 disabled={chainId !== connectedChainId}
                                 variant="contained"
-                                onClick={changeLocalOwner && handleClose1}
+                                onClick={() => { changeLocalOwner(); handleClose1(); }}
                               >
                                 Confirm
                               </Button>

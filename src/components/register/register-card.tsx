@@ -1,18 +1,10 @@
 import PropTypes from "prop-types";
 import {
-  Avatar,
-  Box,
   Button,
   Card,
   CardContent,
   Divider,
-  duration,
   IconButton,
-  Paper,
-  Step,
-  StepContent,
-  StepLabel,
-  Stepper,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -24,7 +16,6 @@ import { AuthContext } from "../../contexts/auth-context";
 import { RegisterStatusCard } from "./register-status-card";
 import { useQuery } from "react-query";
 import { fetchEstimateRegisterGas, fetchPriceData } from "../../utils/HinterEnde";
-import { namehash } from "../../utils/hash";
 import { AxelarContext } from "../../contexts/axelar-context";
 import { getChainNameByChainId, getEVMChainByChainId, getNativeAssetByChainId } from "../../utils/ChainTranslation";
 import { mainChainId, supportedChains } from "../../utils/chain-ids";
@@ -53,8 +44,7 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
     const registerGas = (await fetchEstimateRegisterGas(
       chainId,
       name,
-      namehash(name),
-      address,
+      address!,
       year * 365 * 24 * 60 * 60
     )).est;
 
@@ -151,9 +141,9 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
                   </Typography>
                   <Divider />
                   <Typography color="textPrimary" gutterBottom variant="h6" mt={"0.2rem"}>
-                    {registerFeeStatus === "success" && <p>{registerFee} USDC</p>}
-                    {registerFeeStatus === "loading" && <p>Loading...</p>}
-                    {registerFeeStatus === "error" && <p>Error!</p>}
+                    {registerFeeStatus === "success" && <>{registerFee} USDC</>}
+                    {registerFeeStatus === "loading" && <>Loading...</>}
+                    {registerFeeStatus === "error" && <>Error!</>}
                   </Typography>
                 </Grid>
                 {/* Arrow */}
