@@ -25,12 +25,14 @@ export const Layout = (props: { children: any }) => {
   }
 
   return (
-    <main style={{display: "flex", width: "100vw", height: "100vh"}}>
+    <main className="flex w-screen h-screen">
       <DashboardSidebar onClose={() => setSidebarOpen(false)} open={isSidebarOpen} solid={canFitSolidSidebar} />
-      <div style={{ width: "100%", height: "100%", opacity: (isSidebarOpen && !canFitSolidSidebar) ? "0.5" : "1" }} onClick={closeNonSolidSidebar}>
+      <div className="w-full h-full" style={{ width: "100%", height: "100%", opacity: (isSidebarOpen && !canFitSolidSidebar) ? "0.5" : "1" }} onClick={closeNonSolidSidebar}>
         <div style={{ pointerEvents: (isSidebarOpen && !canFitSolidSidebar) ? 'none' : 'unset'}}>
           <Navbar toggleSidebar={toggleSidebar} />
-          {children}
+          <div className="p-3">
+            {children}
+          </div>
         </div>
       </div>
     </main>

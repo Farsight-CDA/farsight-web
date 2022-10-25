@@ -62,77 +62,71 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
 
   useEffect(() => {
     setBuyBool(true);
-  }, [chainId]);
+  }, [chainId, address]);
 
   return (
     <>
       <Typography sx={{ mb: 3, ml: 1 }} variant="h4">
         Register
       </Typography>
+
       <Grid container spacing={1}>
-        <Grid pc={12}>
+
+        <Grid mobile={12}>
           <Card>
             <CardContent>
-              <Typography align="left" color="textPrimary" gutterBottom variant="h5">
+              <Typography className="mb-0" align="left" color="textPrimary" gutterBottom variant="h5">
                 {name}.far
               </Typography>
             </CardContent>
           </Card>
         </Grid>
         
-        <Grid pc={12}>
+        <Grid mobile={12}>
           <Card>
-            <CardContent>
+            <CardContent className="text-center">
               <Grid container>
                 {/* Registration Period */}
-                <Grid xs={12} sm={5} md={3}>
+                <Grid mobile={12} pc={3}>
                   <Typography color="textPrimary" gutterBottom variant="h6">
                     Registration Period
                   </Typography>
                   <Divider />
-                  <Grid container direction={"row"}>
-                    <Grid xs={2} sm={2} md={2}>
-                      <IconButton
-                        onClick={() => (year < 2 ? null : setYear(year - 1))}
-                        aria-label="delete"
-                      >
-                        <RemoveIcon />
-                      </IconButton>
-                    </Grid>
-                    <Grid xs={8} sm={8} md={8}>
-                      <Typography
-                        align="center"
-                        color="textPrimary"
-                        gutterBottom
-                        variant="h5"
-                        minWidth={"11rem"}
-                      >
-                        {year > 1 ? year + " Years" : year + " Year"}
-                      </Typography>
-                    </Grid>
-                    <Grid xs={2} sm={2} md={2}>
-                      <IconButton onClick={() => setYear(year + 1)} aria-label="delete">
-                        <AddIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
+                  <div className={"flex justify-around"}>
+                    <IconButton
+                      onClick={() => (year < 2 ? null : setYear(year - 1))}
+                      aria-label="delete"
+                    >
+                      <RemoveIcon />
+                    </IconButton>
+
+                    <Typography
+                      align="center"
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h5"
+                      minWidth={"11rem"}
+                    >
+                      {year > 1 ? year + " Years" : year + " Year"}
+                    </Typography>
+
+                    <IconButton onClick={() => setYear(year + 1)} aria-label="delete">
+                      <AddIcon />
+                    </IconButton>
+                  </div>
                 </Grid>
+
                 {/* Arrow */}
                 <Grid
-                  xs={2}
-                  sm={2}
-                  md={1}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                  }}
+                  mobile={12}
+                  pc={1}
+                  className="flex items-center flex-wrap justify-center"
                 >
                   <KeyboardDoubleArrowRightIcon fontSize={"large"} />
                 </Grid>
+
                 {/* Registration price to pay */}
-                <Grid xs={12} sm={5} md={3}>
+                <Grid mobile={12} pc={3}>
                   <Typography color="textPrimary" gutterBottom variant="h6">
                     Registration fee
                   </Typography>
@@ -143,22 +137,18 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
                     {registerFeeStatus === "error" && <>Error!</>}
                   </Typography>
                 </Grid>
+
                 {/* Arrow */}
                 <Grid
-                  xs={12}
-                  sm={12}
-                  md={1}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                  }}
+                  mobile={12}
+                  pc={1}
+                  className="flex items-center flex-wrap justify-center"
                 >
                   <KeyboardDoubleArrowRightIcon fontSize={"large"} />
                 </Grid>
+
                 {/* Total Price */}
-                <Grid xs={12} sm={12} md={4}>
+                <Grid mobile={12} pc={3}>
                   <Typography color="textPrimary" gutterBottom variant="h6">
                     The price depending on the chain.
                   </Typography>
@@ -179,14 +169,14 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
         </Grid>
 
         {buyBool ? (
-          <Grid pc={12}>
+          <Grid mobile={12}>
             <Card>
-              <CardContent>
-                <Typography sx={{ ml: 5 }} color="textPrimary" variant="h5">
+              <CardContent className="grid">
+                <Typography color="textPrimary" variant="h5" className="mb-3">
                   This Name is available you can buy it now
                 </Typography>
 
-                <Button variant="contained" sx={{ mr: 5 }} onClick={() => setBuyBool(false)}>
+                <Button variant="contained" onClick={() => setBuyBool(false)}>
                   Buy
                 </Button>
               </CardContent>
@@ -194,7 +184,7 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
           </Grid>
         ) : (
           <>
-            <Grid xs={12}>
+            <Grid mobile={12}>
               <Card>
                 <CardContent>
                   <Typography color="textPrimary" gutterBottom variant="h5">
@@ -203,7 +193,7 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12}>
+            <Grid mobile={12}>
               <Card sx={{ p: 3 }}>
                 {(isSupported && gasFeeStatus == 'success') && <RegisterStatusCard
                   name={name}
