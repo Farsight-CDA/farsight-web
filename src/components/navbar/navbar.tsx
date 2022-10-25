@@ -11,12 +11,12 @@ import {
   Toolbar,
   Tooltip,
   Typography,
+  useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { AuthContext } from "../../contexts/auth-context";
 import { useRouter } from "next/router";
-import { useTheme } from "@mui/system";
 
 interface NavbarProps {
   toggleSidebar: () => void;
