@@ -19,7 +19,7 @@ const Page = () => (
         minHeight: '100%'
       }}
     >
-      <Container maxWidth="md">
+      <Container maxWidth="tablet">
         <Box
           sx={{
             alignItems: 'center',

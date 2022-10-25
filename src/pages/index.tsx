@@ -15,7 +15,7 @@ const Page = () => (
         py: 8,
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="tablet">
         <Grid
           container
           spacing={1}
@@ -24,13 +24,13 @@ const Page = () => (
           justifyContent="center"
           style={{ minHeight: "30vh" }}
         >
-          <Grid item xs={12}>
+          <Grid mobile={12}>
             <Typography variant="h3">Farsight</Typography>
           </Grid>
-          <Grid item xs={12}>
+          <Grid mobile={12}>
             <Typography variant="h5">Dashboard / Products</Typography>
           </Grid>
-          <Grid item xs={12}>
+          <Grid mobile={12}>
             <Typography variant="h5">Coming Soon</Typography>
           </Grid>
         </Grid>

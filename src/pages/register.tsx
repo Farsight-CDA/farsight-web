@@ -51,9 +51,6 @@ const Page = () => {
         <title>Register </title>
       </Head>
       <Box
-        style={{
-          backgroundImage: `url("/static/images/desert-482068432.jpg")`,
-        }}
         component="main"
         sx={{
           flexGrow: 1,
@@ -61,7 +58,6 @@ const Page = () => {
         }}
       >
         <Container
-          maxWidth="lg"
           style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
         >
           <Grid
@@ -78,16 +74,16 @@ const Page = () => {
               width: "auto",
             }}
           >
-            <Grid item xs={12}>
+            <Grid mobile={12}>
               <img src={basepath + "Logo FarSight v1.3.svg"} width="300" height="300" />
             </Grid>
-            <Grid item xs={12}>
+            <Grid mobile={12}>
               <Typography variant="h3">Farsight</Typography>
             </Grid>
-            <Grid item xs={12} sx={{ marginBottom: "10px" }}>
+            <Grid mobile={12} className="mb-10">
               <Typography variant="h5">Names</Typography>
             </Grid>
-            <Grid item sm={12}>
+            <Grid mobile={12}>
               <TextField
                 fullWidth
                 value={name}
@@ -119,6 +115,6 @@ const Page = () => {
     </>
   );
 };
-Page.getLayout = (page: any) => <Layout>{page}</Layout>;
+Page.getLayout = (page: any) => <Layout backgroundImage='url("/static/images/desert-482068432.jpg")'>{page}</Layout>;
 
 export default Page;
