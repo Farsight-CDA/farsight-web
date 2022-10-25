@@ -53,43 +53,37 @@ const InnerPage = ({ name }: InnerNamePageProps) => {
       <Head>
         <title>Register</title>
       </Head>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8,
-        }}
-      >
-        <Container maxWidth="pc">
-          {status === "loading" && (
-            <Grid
-              container
-              spacing={1}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              style={{ minHeight: "30vh" }}
-            >
-              <CircularProgress />
-            </Grid>
-          )}
-          {status === "error" && (
-            <Grid
-              container
-              spacing={1}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              style={{ minHeight: "30vh" }}
-            >
-              <ErrorOutlineIcon fontSize={"large"} />
-            </Grid>
-          )}
+      <Container sx={{
 
-          {status === "success" && !data.available && <WatchCard name={name} registration={data} />}
-          {status === "success" && data.available && <RegisterCard name={name} />}
-        </Container>
-      </Box>
+      }}>
+        {status === "loading" && (
+          <Grid
+            container
+            spacing={1}
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{ minHeight: "30vh" }}
+          >
+            <CircularProgress />
+          </Grid>
+        )}
+        {status === "error" && (
+          <Grid
+            container
+            spacing={1}
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{ minHeight: "30vh" }}
+          >
+            <ErrorOutlineIcon fontSize={"large"} />
+          </Grid>
+        )}
+
+        {status === "success" && !data.available && <WatchCard name={name} registration={data} />}
+        {status === "success" && data.available && <RegisterCard name={name} />}
+      </Container>
     </>
   );
 };

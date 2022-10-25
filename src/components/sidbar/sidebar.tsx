@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -30,15 +30,12 @@ const items = [
 
 interface DashboardSidebarProps {
   open: boolean;
+  solid: boolean;
   onClose: any;
 }
 
-export const DashboardSidebar = ({ open, onClose }: DashboardSidebarProps) => {
+export const DashboardSidebar = ({ open, solid, onClose }: DashboardSidebarProps) => {
   const router = useRouter();
-  const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up("pc"), {
-    defaultMatches: true,
-    noSsr: false,
-  });
 
   useEffect(
     () => {
@@ -55,85 +52,71 @@ export const DashboardSidebar = ({ open, onClose }: DashboardSidebarProps) => {
   );
 
   const content = (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-        }}
-      >
-        <div>
-          <Box sx={{ m: 2 }}>
-            <NextLink href="/" passHref>
-              <a>
-                <Image
-                  width="100%"
-                  height="100%"
-                  src="/static/logo.svg"
-                  style={{ padding: 0 }}
-                  alt={""}
-                />
-              </a>
-            </NextLink>
-          </Box>
-        </div>
-        <Divider
-          sx={{
-            borderColor: "#2D3748",
-            my: 3,
-            marginTop: "0px",
-          }}
-        />
-        <Box sx={{ flexGrow: 1 }}>
-          {items.map((item) => (
-            <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
-          ))}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        backgroundColor: "#535353",
+        width: "280px"
+      }}
+    >
+      <div>
+        <Box sx={{ m: 2 }}>
+          <NextLink href="/" passHref>
+            <a>
+              <Image
+                width="100%"
+                height="100%"
+                src="/static/logo.svg"
+                style={{ padding: 0 }}
+                alt={""}
+              />
+            </a>
+          </NextLink>
         </Box>
+      </div>
+      <Divider
+        sx={{
+          borderColor: "#2D3748",
+          my: 3,
+          marginTop: "0px",
+        }}
+      />
+      <Box sx={{ flexGrow: 1 }}>
+        {items.map((item) => (
+          <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
+        ))}
       </Box>
-    </>
+    </Box>
   );
 
-  if (lgUp) {
+  if (solid) {
     return (
-      <Drawer
-        anchor="left"
-        open
-        PaperProps={{
-          sx: {
-            backgroundColor: "neutral.900",
-            color: "#FFFFFF",
-            width: 280,
-          },
-        }}
-        variant="permanent"
-      >
+      <div style={{
+        backgroundColor: "neutral.900",
+        color: "#FFFFFF",
+        width: 280,
+      }}>
         {content}
-      </Drawer>
+      </div>
     );
   }
 
-  return (
-    <Drawer
-      anchor="left"
-      onClose={onClose}
-      open={open}
-      PaperProps={{
-        sx: {
-          backgroundColor: "neutral.900",
-          color: "#FFFFFF",
-          width: 280,
-        },
-      }}
-      sx={{ zIndex: (theme) => theme.zIndex.appBar + 100 }}
-      variant="temporary"
-    >
-      {content}
-    </Drawer>
-  );
-};
+  if (open) {
+    return (
+      <div style={{
+        backgroundColor: "neutral.900",
+        color: "#FFFFFF",
+        width: "280px",
+        position: "fixed",
+        height: "100%",
+        zIndex: 5000
+      }}>
+        {content}
+      </div>
+    )
+  }
 
-DashboardSidebar.propTypes = {
-  onClose: PropTypes.func,
-  open: PropTypes.bool,
-};
+  return (<></>);
+}

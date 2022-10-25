@@ -19,14 +19,12 @@ import { useRouter } from "next/router";
 import { useTheme } from "@mui/system";
 
 interface NavbarProps {
-  onSidebarOpen: () => void;
+  toggleSidebar: () => void;
 }
 
-export const Navbar = (props: NavbarProps) => {
+export const Navbar = ({ toggleSidebar }: NavbarProps) => {
   const themeeeee = useTheme();
   const { isConnected, toggleConnection, address, chainId } = useContext(AuthContext);
-
-  const { onSidebarOpen } = props;
 
   const [name, setName] = useState("");
   const [validName, setValidName] = useState(false);
@@ -58,7 +56,7 @@ export const Navbar = (props: NavbarProps) => {
     <AppBar position="sticky">
       <Toolbar disableGutters>
         <IconButton
-          onClick={onSidebarOpen}
+          onClick={toggleSidebar}
           sx={{
             display: {
               mobile: "inline-flex",
