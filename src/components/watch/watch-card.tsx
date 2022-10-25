@@ -1,5 +1,5 @@
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import { Card } from "@mui/material";
+import { Card, CardContent } from "@mui/material";
 import * as React from "react";
 import { ChainContent } from "./chain-content";
 import { Typography } from "@mui/material";
@@ -32,57 +32,58 @@ export const WatchCard = ({ name, registration }: WatchCardProps) => {
         {name}.far {canEdit && <>(Yours)</>}
       </Typography>
       <Grid container spacing={1}>
-        <Grid xs={12}>
+        <Grid mobile={12}>
           <Card>
-            <Typography
-              sx={{
-                textAlign: "center",
-                m: 3,
-              }}
-              variant="h5"
-            >
-              NFT Chain
-            </Typography>
+            <CardContent>
+              <Typography
+                className="text-center"
+                variant="h5"
+              >
+                NFT Chain
+              </Typography>
+            </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sx={{ ml: 2, mr: 2 }}>
+
+        <Grid mobile={12} className="mx-5">
           {keeperChain === null && <NoKeeperChainHint></NoKeeperChainHint>}
           {keeperChain !== null && <ChainContent
             registration={registration}
             chainState={keeperChain}
-            canEdit={canEdit}
             name={name}
-            keeperChainId={keeperChain?.chainId}
+            ownerAddress={keeperChain.localOwner}
+            keeperChainId={keeperChain.chainId}
           />}
         </Grid>
-        <Grid xs={12} sx={{ mt: 3 }}>
+
+        <Grid mobile={12} sx={{ mt: 3 }}>
           <Card style={{ marginBottom: "5px" }}>
-            <Typography
-              sx={{
-                textAlign: "center",
-                m: 3
-              }}
-              variant="h5"
-            >
-              Other Supported Chains
-            </Typography>
+            <CardContent>
+              <Typography
+                className="text-center"
+                variant="h5"
+              >
+                Other Supported Chains
+              </Typography>
+            </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sx={{ ml: 2, mr: 2 }} container spacing={3}>
+
           {registration.chainStates
             .filter((x) => !x.isKeeper)
             .map((state) => (
-              <Grid key={state.chainId} xs={6}>
+              <Grid key={state.chainId} 
+                    mobile={12} pc={6}
+                    className="mx-5">
                 <ChainContent 
                   registration={registration} 
                   chainState={state} 
-                  canEdit={false}
                   name={name}
+                  ownerAddress={keeperChain === null ? null : keeperChain.localOwner}
                   keeperChainId={keeperChain === null ? null : keeperChain.chainId}
                 />
               </Grid>
             ))}
-        </Grid>
       </Grid>
     </>
   );

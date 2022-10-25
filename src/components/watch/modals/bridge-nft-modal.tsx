@@ -1,7 +1,4 @@
-import { EvmChain } from "@axelar-network/axelarjs-sdk";
-import { LoadingButton } from "@mui/lab";
 import { Button, Card, CardContent, FormControl, FormControlLabel, Grid, Input, InputAdornment, InputLabel, Radio, RadioGroup, Step, StepContent, StepLabel, Stepper, TextField, Typography } from "@mui/material";
-import { Box } from "@mui/system";
 import { BigNumber } from "ethers";
 import { useContext, useState } from "react";
 import { useQuery } from "react-query";
@@ -10,7 +7,7 @@ import { AxelarContext } from "../../../contexts/axelar-context";
 import { mainChainId } from "../../../utils/chain-ids";
 import { getBridgeTargetNameByChainId, getChainNameByChainId, getEVMChainByChainId, getNativeAssetByChainId } from "../../../utils/ChainTranslation";
 import { namehash } from "../../../utils/hash";
-import { fetchEstimateRegisterGas, Registration } from "../../../utils/HinterEnde";
+import { Registration } from "../../../utils/HinterEnde";
 
 export interface BridgeNFTModalProps {
     keeperChainId: number;
@@ -32,8 +29,6 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
     const [bridgeTx, setBridgeTx] = useState<string | null>(null);
 
     const { status, data: gasFee } = useQuery(["bridgeGasEstimate", targetChainId], fetchBridgeGasFeeEstimation);
-
-    console.log(status);
 
     const activeStep =
         targetChainId === null || status === 'loading' || status === 'error'
@@ -152,9 +147,12 @@ export const BridgeNFTModal = ({ keeperChainId, registration, name }: BridgeNFTM
                             >   
                                 Select
                             </Button>}
-                            {(targetChainId !== null && status == 'loading' && <LoadingButton>
+                            {(targetChainId !== null && status == 'loading' && <Button
+                                disabled={true}
+                                variant="contained"
+                                color="secondary">
                                 Loading...
-                            </LoadingButton>)}
+                            </Button>)}
                             
                         </StepContent>
                     </Step>

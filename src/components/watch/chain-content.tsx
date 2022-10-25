@@ -21,31 +21,21 @@ import LockIcon from "@mui/icons-material/Lock";
 import { mainChainId } from "../../utils/chain-ids";
 import { ChainState, Registration } from "../../utils/HinterEnde";
 import { BridgeNFTModal } from "./modals/bridge-nft-modal";
+import { CrossChainTransferButton } from "./buttons/cross-chain-transfer-button";
+import { IncrementOwnerVersionButton } from "./buttons/increment-owner-version-button";
+import { BridgeLocalOwnerButton } from "./buttons/bridge-localowner-button";
 
 interface ChainContentProps {
   registration: Registration;
+  ownerAddress: string | null;
   keeperChainId: number | null;
-  canEdit: boolean;
   chainState: ChainState;
   name: string;
 }
 
-export const ChainContent = ({ registration, keeperChainId, chainState, canEdit, name }: ChainContentProps) => {
+export const ChainContent = ({ registration, ownerAddress, keeperChainId, chainState, name }: ChainContentProps) => {
   const { isConnected, chainId: connectedChainId, address } = useContext(AuthContext);
-
-  //modal
-  const [open1, setOpen1] = useState(false);
-  const handleOpen1 = () => setOpen1(true);
-  const handleClose1 = () => setOpen1(false);
-  const [open2, setOpen2] = useState(false);
-  const handleOpen2 = () => setOpen2(true);
-  const handleClose2 = () => setOpen2(false);
-  const [openSetValue, setOpensetValue] = useState(false);
-  const handleOpensetValue = () => setOpensetValue(true);
-  const handleClosesetValue = () => setOpensetValue(false);
-  const changeLocalOwner = () => {}; //ToDo: machmal
-  const changeToMainChain = () => {}; //ToDo: machmal
-  const setValue = () => {}; //ToDo: machmal
+  const isKeeperChain = keeperChainId !== null && ownerAddress !== null && keeperChainId === chainState.chainId;
 
   const { chainId, expiration, localOwner, isKeeper, ownerChangeVersion, registrationVersion } =
     chainState;
@@ -53,7 +43,7 @@ export const ChainContent = ({ registration, keeperChainId, chainState, canEdit,
   const isExpired = expiration <= new Date().getTime() / 1000;
   const basepath = "/static/images/chainlogos/";
 
-  return (
+  return ( 
     <Card
       sx={isExpired ? { backgroundColor: "gray" } : null}
       style={
@@ -63,123 +53,74 @@ export const ChainContent = ({ registration, keeperChainId, chainState, canEdit,
       }
     >
       <CardContent>
-        <Grid container spacing={0.5}>
-          <Grid
-            xs={3}
-            style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <img src={basepath + getLogoNameByChainId(chainId)} width="50" height="50" />
-          </Grid>
-          <Grid xs={9} style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Typography color="textPrimary" gutterBottom variant="h5">
-              {getChainNameByChainId(chainId)}
-            </Typography>
-          </Grid>
-          <Grid xs={12} />
-          {!isExpired && (
-            <Grid xs={12}>
-              <Box>
-                <Typography color="textPrimary" gutterBottom variant="h5">
-                  LocalOwner: {localOwner.slice(0, 7) + "..." + localOwner.slice(21, 28)}
-                </Typography>
-              </Box>
+
+        <div className="flex justify-between items-center border-b-2 border-solid pb-2">
+          <Typography className="" 
+                      color="textPrimary" variant="h5">
+            {getChainNameByChainId(chainId)}
+          </Typography>
+          <img src={basepath + getLogoNameByChainId(chainId)} className="w-12" />
+        </div>
+
+        {isExpired 
+        ?
+          (
+            <>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <LockIcon fontSize={"large"} sx={{ ml: 1 }} />
+                <p>Uninitialized or Expired</p>
+
+                <BridgeLocalOwnerButton
+                  name={name}
+                  registration={registration}
+                  ownerAddress={ownerAddress}
+                  keeperChainId={keeperChainId}
+                />
+              </div>
+            </>
+          )
+        :
+          (
+            <>
+              <Typography color="textPrimary" gutterBottom variant="h6">
+                LocalOwner: {localOwner.slice(0, 7) + "..." + localOwner.slice(21, 28)}
+              </Typography>
               <Typography color="textPrimary" gutterBottom variant="h6">
                 ExpiresAt: {new Date(Number(expiration * 1000)).toLocaleString()}
               </Typography>
               <Typography color="textPrimary" gutterBottom variant="h6">
                 Version: {registrationVersion}.{ownerChangeVersion}
               </Typography>
-            </Grid>
-          )}
-          {!isExpired && (
-            <>
-              <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-start" }}>
-                {canEdit &&<Tooltip
-                  title={
-                    connectedChainId === null
-                      ? "please connect your wallet"
-                      : chainId !== connectedChainId
-                        ? "you are connected to another chain"
-                        : "Here you can send your NFT to another supported Chain"
-                  }
-                >
-                   <span>
-                    <Button
-                      disabled={chainId !== connectedChainId}
-                      variant="contained"
-                      onClick={() => setOpen2(true)}
-                    >
-                      Cross Chain Transfer
-                    </Button>
-                  </span>
-                </Tooltip>}
-                {keeperChainId !== null && <Dialog
-                  open={open2}
-                  onClose={handleClose2}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-                >
-                  <BridgeNFTModal registration={registration} name={name} keeperChainId={keeperChainId}></BridgeNFTModal>
-                </Dialog>}
-              </Grid>
-              <Grid xs={6} sm={6} md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-                {canEdit &&<Tooltip
-                  title={
-                    !isConnected
-                      ? "please connect your wallet"
-                      : chainId !== keeperChainId
-                      ? "you are connected to another chain"
-                      : "here you can invalidate previous owners records on all chains"
-                  }
-                >
-                   <span>
-                    <Button
-                      disabled={chainId !== connectedChainId}
-                      variant="contained"
-                      onClick={handleOpen1}
-                    >
-                      Increment Owner Version
-                    </Button>
-                  </span>
-                </Tooltip>}
-                <Dialog
-                  open={open1}
-                  onClose={handleClose1}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-                >
-                  <span></span>
-                </Dialog>
-              </Grid>
-            </>
-          )}
-        </Grid>
-        {isExpired && <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
-          <LockIcon fontSize={"large"} sx={{ ml: 1 }} />
-          <p>Uninitialized or Expired</p>
-          {canEdit && <Tooltip
-            title={
-              !isConnected
-                ? "Please connect your wallet"
-                : chainId !== keeperChainId
-                  ? "You need to connect to your NFT chain"
-                  : "Here you can set records cross chain"
-            }
-          >
-            <span>
-              <Button
-                disabled={mainChainId !== connectedChainId}
-                variant="contained"
-                onClick={handleOpen1}
-              >
-                Set Record
-              </Button>
-            </span>
-          </Tooltip>}
-        </div>}
 
+              <div className="flex justify-between">
+                {isKeeperChain && (
+                  <div className="flex flex-row">
+                    <CrossChainTransferButton
+                      name={name}
+                      registration={registration}
+                      ownerAddress={ownerAddress}
+                      keeperChainId={keeperChainId}
+                    />
+                    <div className="px-2" />
+                    <IncrementOwnerVersionButton
+                      name={name}
+                      registration={registration}
+                      ownerAddress={ownerAddress}
+                      keeperChainId={keeperChainId}
+                    />
+                  </div>
+                )}
+                <div className="px-2"></div> {/* Spacer */}
+                <BridgeLocalOwnerButton
+                  name={name}
+                  registration={registration}
+                  ownerAddress={ownerAddress}
+                  keeperChainId={keeperChainId}
+                />
+              </div>
+            </>
+          )
+        }
       </CardContent>
     </Card>
   );

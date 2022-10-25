@@ -70,7 +70,7 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
         Register
       </Typography>
       <Grid container spacing={1}>
-        <Grid xs={12}>
+        <Grid pc={12}>
           <Card>
             <CardContent>
               <Typography align="left" color="textPrimary" gutterBottom variant="h5">
@@ -79,7 +79,8 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12}>
+        
+        <Grid pc={12}>
           <Card>
             <CardContent>
               <Grid container>
@@ -176,33 +177,21 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
             </CardContent>
           </Card>
         </Grid>
+
         {buyBool ? (
-          <>
-            <Grid xs={12}>
-              <Card>
-                <CardContent>
-                  <Grid container>
-                    <Grid xs={6}>
-                      <Typography sx={{ ml: 5 }} color="textPrimary" variant="h5">
-                        This Name is available you can buy it now
-                      </Typography>
-                    </Grid>
-                    <Grid
-                      xs={6}
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                      }}
-                    >
-                      <Button variant="contained" sx={{ mr: 5 }} onClick={() => setBuyBool(false)}>
-                        Buy
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          </>
+          <Grid pc={12}>
+            <Card>
+              <CardContent>
+                <Typography sx={{ ml: 5 }} color="textPrimary" variant="h5">
+                  This Name is available you can buy it now
+                </Typography>
+
+                <Button variant="contained" sx={{ mr: 5 }} onClick={() => setBuyBool(false)}>
+                  Buy
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
         ) : (
           <>
             <Grid xs={12}>
