@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { CssBaseline } from "@mui/material";
-import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { AuthProvider } from "../contexts/auth-context";
 import { theme } from "../theme";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -25,16 +25,14 @@ const App = (props: props) => {
         <title>Farsight</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <QueryClientProvider client={queryClient}>
-            <AxelarProvider>
-              <AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>
-            </AxelarProvider>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </StyledEngineProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <QueryClientProvider client={queryClient}>
+          <AxelarProvider>
+            <AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>
+          </AxelarProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </>
   );
 };
