@@ -33,7 +33,7 @@ export const theme = createTheme({
       disabled: "rgba(255, 255, 255, 0.5)",
     },
     primary: {
-      main: "#15a264",
+      main: "#86E3D8",
       light: "rgb(67, 180, 131)",
       dark: "rgb(14, 113, 70)",
     },

@@ -1,5 +1,5 @@
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, useTheme } from "@mui/material";
 import * as React from "react";
 import { ChainContent } from "./chain-content";
 import { Typography } from "@mui/material";
@@ -18,6 +18,8 @@ export const WatchCard = ({ name, registration }: WatchCardProps) => {
     registration.chainStates[0];
   const { address } = useContext(AuthContext);
 
+  const theme = useTheme();
+
   const keeperChains = registration.chainStates.filter((x) => x.isKeeper);
   const keeperChain = keeperChains.length == 1
     ? keeperChains[0]
@@ -27,13 +29,13 @@ export const WatchCard = ({ name, registration }: WatchCardProps) => {
     keeperChain.localOwner.toLowerCase() == address.toLowerCase();
 
   return (
-    <>
+    <div className="mt-5">
       <Typography sx={{ mb: 3, ml: 1 }} variant="h4">
         {name}.far {canEdit && <>(Yours)</>}
       </Typography>
       <Grid container spacing={1}>
         <Grid mobile={12}>
-          <Card>
+          <Card className="text-black" sx={{ backgroundColor: theme.palette.primary.main }}>
             <CardContent>
               <Typography
                 className="text-center"
@@ -57,7 +59,7 @@ export const WatchCard = ({ name, registration }: WatchCardProps) => {
         </Grid>
 
         <Grid mobile={12} sx={{ mt: 3 }}>
-          <Card style={{ marginBottom: "5px" }}>
+          <Card className="text-black" style={{ marginBottom: "5px", backgroundColor: theme.palette.primary.main }}>
             <CardContent>
               <Typography
                 className="text-center"
@@ -85,6 +87,6 @@ export const WatchCard = ({ name, registration }: WatchCardProps) => {
               </Grid>
             ))}
       </Grid>
-    </>
+    </div>
   );
 };

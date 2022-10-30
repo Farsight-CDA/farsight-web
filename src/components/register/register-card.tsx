@@ -85,9 +85,9 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
         <Grid mobile={12}>
           <Card>
             <CardContent className="text-center">
-              <Grid container>
+              <Grid container className="justify-center items-center">
                 {/* Registration Period */}
-                <Grid mobile={12} pc={3}>
+                <Grid mobile={12} pc={4}>
                   <Typography color="textPrimary" gutterBottom variant="h6">
                     Registration Period
                   </Typography>
