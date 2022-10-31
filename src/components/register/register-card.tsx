@@ -41,12 +41,14 @@ export const RegisterCard = ({ name }: RegisterCardProps) => {
       return BigNumber.from(0);
     }
 
-    const registerGas = (await fetchEstimateRegisterGas(
-      chainId,
-      name,
-      address!,
-      year * 365 * 24 * 60 * 60
-    )).est;
+    //const registerGas = (await fetchEstimateRegisterGas(
+    //  chainId,
+    //  name,
+    //  address!,
+    //  year * 365 * 24 * 60 * 60
+    //)).est;
+
+    const registerGas = 200000;
 
     const gasEstimate = BigNumber.from(await axelarClient.estimateGasFee(
       getEVMChainByChainId(chainId),
